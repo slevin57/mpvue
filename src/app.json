@@ -1,0 +1,12 @@
+{
+  "pages": [
+    "pages/share/main",
+    "pages/list/main"
+  ],
+  "window": {
+    "backgroundTextStyle": "light",
+    "navigationBarBackgroundColor": "#fff",
+    "navigationBarTitleText": "我的毕业相册",
+    "navigationBarTextStyle": "black"
+  }
+}
