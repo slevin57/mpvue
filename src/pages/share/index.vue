@@ -1,7 +1,8 @@
 // 单页面分享页，不用处理swiper与video兼容问题
 <template>
-    <div class="page-share">
-        <div class="video-wrapper">
+<div>
+    <div class="page-share-horizontal">
+        <div class="video-wrapper" :style="{height:videoHeight}">
             <video id="miniVideo" 
                 :src="videoUrl" 
                 :show-center-play-btn="false"
@@ -29,6 +30,7 @@
             </div>
         </div>
     </div>
+</div>
 </template>
 <script>
 import {mapGetters} from 'vuex'
@@ -43,6 +45,7 @@ import {mapGetters} from 'vuex'
                 title:'',//视频标题
                 thumbnailUrl: '',//视频封面
                 attachUrl: '',//广告图片
+                direction: 2,//1横屏视频2竖屏
             }
         },
         computed : {
@@ -55,6 +58,13 @@ import {mapGetters} from 'vuex'
                 } else {
                     return false;
                 }
+            },
+            videoHeight () {
+                if (this.direction===1){
+                    return 504+'rpx'
+                } else {
+                    return 822+'rpx'
+                }
             }
         },
         mounted () {
@@ -65,6 +75,7 @@ import {mapGetters} from 'vuex'
             this.$http.get(`/share/video?id=${e.id}`).then(({data}) => {
                 console.log(`data:`,data);
                 if (data.code==200 && data.data){
+                    this.direction = data.data.direction;
                     this.videoUrl = this.$.handleAssetsUrl(data.data.url);
                     this.headImgUrl = this.$.handleAssetsUrl(data.data.headImage);
                     this.userName = data.data.author;
@@ -112,132 +123,136 @@ import {mapGetters} from 'vuex'
 </script>
 
 <style scoped lang="scss">
-.page-share{
+.page-share-horizontal{
     width: 100%;
     height: 100vh;
     display: flex;
     flex-direction: column;
-}
-.video-wrapper{
-    font-size: 14px;
-    box-sizing: border-box;
-    width: 750rpx;
-    height: 504rpx;
-    position: relative;
-    video{
-        object-fit: fill;
-        width: 100%;
-        height: 100%;
+    .video-wrapper{
+        font-size: 14px;
+        box-sizing: border-box;
+        width: 750rpx;
+        // height: 504rpx;
+        // height: 822rpx;
+        position: relative;
+        video{
+            object-fit: fill;
+            width: 100%;
+            height: 100%;
+        }
+        .play-icon {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 152rpx;
+            height: 152rpx;
+            display: inline-block;
+        }
     }
-    .play-icon {
-        position: absolute;
-        top: 50%;
-        left: 50%;
-        transform: translate(-50%, -50%);
-        width: 152rpx;
-        height: 152rpx;
-        display: inline-block;
-    }
-}
-.info-wrapper{
-    height: 107rpx;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 26rpx;
-    background-color: #151515;
-    color: #fff;
-    .user-info{
-        height: 75rpx;
+    .info-wrapper{
+        height: 107rpx;
         display: flex;
         align-items: center;
         justify-content: space-between;
-        img{
-            display: inline-block;
-            border-radius: 50%;
-            width: 75rpx;
+        padding: 26rpx;
+        background-color: #151515;
+        color: #fff;
+        .user-info{
             height: 75rpx;
-            margin-right: 30rpx;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            img{
+                display: inline-block;
+                border-radius: 50%;
+                width: 75rpx;
+                height: 75rpx;
+                margin-right: 30rpx;
+            }
+        }
+        .share-img{
+            width: 42rpx;
+            height: 44rpx;
+            margin-right: 26rpx;
+            position: relative;
+            background-color: #151515;
+            img{
+                display: inline-block;
+                width: 100%;
+                height: 100%;
+                position: absolute;
+                left: 0;
+                top: 0;
+            }
         }
     }
-    .share-img{
-        width: 42rpx;
-        height: 44rpx;
-        margin-right: 26rpx;
+    .ad-wrapper{
+        width: 100%;
+        flex: 1;
         position: relative;
-        background-color: #151515;
-        img{
+        .bg{
             display: inline-block;
             width: 100%;
             height: 100%;
+        }
+        .ad-container{
             position: absolute;
             left: 0;
             top: 0;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            .logo-img{
+                display: inline-block;
+                width: 281rpx;
+                height: 150rpx;
+                margin-bottom: 59rpx;
+            }
+            .slogan{
+                font-size: 16px;
+                color: #bebebe;
+            }
+            .next-img{
+                width: 33rpx;
+                height: 36rpx;
+                position: fixed;
+                bottom: 49rpx;
+            }
+            .options {
+                position: fixed;
+                right: 0;
+                bottom: 121rpx;
+                .option{
+                    width: 180rpx;
+                    height: 77rpx;
+                    margin-bottom: 31rpx;
+                    background: #ececec;
+                    color: #5287ff;
+                    border-radius:39rpx 0 0 39rpx ;
+                    display: flex;
+                    justify-content: center;
+                    align-items: center;
+                }
+                .home-icon{
+                    width: 47rpx;
+                    height: 40rpx;
+                    margin-right: 20rpx;
+                }
+                .app-icon{
+                    width: 26rpx;
+                    height: 42rpx;
+                    margin-right: 20rpx;
+                }
+            }
         }
     }
 }
-.ad-wrapper{
-    width: 100%;
-    flex: 1;
-    position: relative;
-    .bg{
-        display: inline-block;
-        width: 100%;
-        height: 100%;
-    }
-    .ad-container{
-        position: absolute;
-        left: 0;
-        top: 0;
-        width: 100%;
-        height: 100%;
-        display: flex;
-        flex-direction: column;
-        justify-content: center;
-        align-items: center;
-        .logo-img{
-            display: inline-block;
-            width: 281rpx;
-            height: 150rpx;
-            margin-bottom: 59rpx;
-        }
-        .slogan{
-            font-size: 16px;
-            color: #bebebe;
-        }
-        .next-img{
-            width: 33rpx;
-            height: 36rpx;
-            position: fixed;
-            bottom: 49rpx;
-        }
-        .options {
-            position: fixed;
-            right: 0;
-            bottom: 121rpx;
-            .option{
-                width: 180rpx;
-                height: 77rpx;
-                margin-bottom: 31rpx;
-                background: #ececec;
-                color: #5287ff;
-                border-radius:39rpx 0 0 39rpx ;
-                display: flex;
-                justify-content: center;
-                align-items: center;
-            }
-            .home-icon{
-                width: 47rpx;
-                height: 40rpx;
-                margin-right: 20rpx;
-            }
-            .app-icon{
-                width: 26rpx;
-                height: 42rpx;
-                margin-right: 20rpx;
-            }
-        }
-    }
+.page-share-vertical{
+
 }
 
 </style>
