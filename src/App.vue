@@ -1,7 +1,12 @@
 <script>
+import {mapMutations} from 'vuex'
 export default {
-  created () {
-    console.log('miniapp createddd!!!')
+  created () { },
+  onShow (opts) {
+      this.changeOptions(opts);
+  },
+  methods:{
+      ...mapMutations(['changeOptions'])
   }
 }
 </script>
