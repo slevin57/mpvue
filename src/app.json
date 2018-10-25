@@ -2,7 +2,8 @@
   "pages": [
     "pages/share/main",
     "pages/shareswiper/main",
-    "pages/video/main"
+    "pages/video/main",
+    "pages/error/main"
   ],
   "window": {
     "backgroundTextStyle": "light",

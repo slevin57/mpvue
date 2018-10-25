@@ -1,8 +1,7 @@
 // 单页面分享页，不用处理swiper与video兼容问题
 <template>
 <div>
-    <div v-if="direction==1" class="page-share-horizental">
-        <!-- <div class="video-wrapper" :style="{height:videoHeight}"> -->
+    <div :class="[direction==1 ? 'page-share-horizental' : 'page-share-vertical']">
         <div class="video-wrapper">
             <video id="miniVideo" 
                 :src="videoUrl" 
@@ -14,7 +13,9 @@
             <div class="info">
                 <div class="user-info">
                     <img :src="headImgUrl" alt="" class="avanta">
-                    <span class="id">@{{userName}}</span>
+                    <span class="username">@{{userName}}</span>
+                    <a href="/pages/share/main?vid=0455981641153">自定义分享</a>
+                    <a href="/pages/share/main?vid=a0513089-70e5-40fe-bdca-82cb9200aed6">基础分享</a>
                 </div>
                 <button open-type="share" class="share-img">
                     <img src="/static/images/share@2x.png" alt="">
@@ -24,39 +25,8 @@
         <div class="ad-wrapper">
             <img class="bg" :src="attachUrl || '/static/images/bg@2x.png'" alt="">
             <div class="ad-container">
-                <img src="/static/images/logo@2x.png" class="logo-img" alt="">
-                <p class="slogan">像做PPT一样做动画视频</p>
-                <div class="options">
-                    <!-- <div class="option home"><img src="/static/images/home@2x.png" class="option-icon home-icon">首页</div> -->
-                    <button v-if="canOpenApp" class="option app" open-type="launchApp" @error="launchAppError()"><img src="/static/images/app@2x.png" class="option-icon app-icon">APP</button>
-                </div>
-            </div>
-        </div>
-    </div>
-    <div v-else class="page-share-vertical">
-        <div class="video-wrapper">
-            <video id="miniVideo" 
-                :src="videoUrl" 
-                :show-center-play-btn="false"
-                @pause="videoPause()"></video>
-            <cover-image v-if="!isPlaying" class="play-icon" src="/static/images/play.png" @click="playVideo()" />
-        </div>
-        <div class="info-wrapper">
-            <div class="info">
-                <div class="user-info">
-                    <img :src="headImgUrl" alt="" class="avanta">
-                    <span class="id">@{{userName}}</span>
-                </div>
-                <button open-type="share" class="share-img">
-                    <img src="/static/images/share@2x.png" alt="">
-                </button>
-            </div>
-        </div>
-        <div class="ad-wrapper">
-            <img class="bg" :src="attachUrl || '/static/images/bg@2x.png'" alt="">
-            <div class="ad-container">
-                <img src="/static/images/logo@2x.png" class="logo-img" alt="">
-                <p class="slogan">像做PPT一样做动画视频</p>
+                <img v-if="!isCustom" src="/static/images/logo@2x.png" class="logo-img" alt="">
+                <p v-if="!isCustom" class="slogan">像做PPT一样做动画视频</p>
                 <div class="options">
                     <!-- <div class="option home"><img src="/static/images/home@2x.png" class="option-icon home-icon">首页</div> -->
                     <button v-if="canOpenApp" class="option app" open-type="launchApp" @error="launchAppError()"><img src="/static/images/app@2x.png" class="option-icon app-icon">APP</button>
@@ -71,6 +41,8 @@ import {mapGetters} from 'vuex'
     export default {
         data () {
             return {
+                id:'',//视频id
+                isCustom: false,//是否为自定义分享
                 isPlaying: false,
                 videoContxt: {},
                 videoUrl:'',
@@ -79,7 +51,7 @@ import {mapGetters} from 'vuex'
                 title:'',//视频标题
                 thumbnailUrl: '',//视频封面
                 attachUrl: '',//广告图片
-                direction: 2,//1横屏视频2竖屏
+                direction: 1,//1横屏视频2竖屏
             }
         },
         computed : {
@@ -93,38 +65,25 @@ import {mapGetters} from 'vuex'
                     return false;
                 }
             },
-            videoHeight () {
-                if (this.direction===1){
-                    return 421+'rpx'
-                } else {
-                    return 693+'rpx'
-                }
-            }
         },
         mounted () {
             this.videoContxt = wx.createVideoContext('miniVideo');
         },
         onLoad (e) {
-            if(!/^[0-9]*$/.test(e.vid)) {
-                this.$http.get(`/common/material?type=1&id=${e.vid}&share=1`).then(({data}) => {
-                    console.log(`data:`,data);
-                    if (data.code==200 && data.data){
-                        this.direction = data.data.direction;
-                        this.videoUrl = this.$.handleAssetsUrl(data.data.url);
-                        this.headImgUrl = this.$.handleAssetsUrl(data.data.headImage);
-                        this.title = data.data.title;
-                        this.userName = data.data.author;
-                    } else {
-                        wx.showToast({
-                            icon:'none',
-                            title:'没有视频id',
-                            duration: 2000,
-                        })                        
-                    }
+            this.id = e.vid;
+            console.log(`this.id:`,this.id);
+            if(this.id===undefined){
+                wx.navigateTo({
+                    url:'/pages/error/main?id=34'
                 })
-             } else {
-                this.$http.get(`/share/video?id=${e.vid}`).then(({data}) => {
-                    console.log(`data:`,data);
+            }
+            // 根据id格式区分普通分享与自定义分享：uuid为普通分享，纯数字为自定义分享
+            this.isCustom = /^[0-9]*$/.test(this.vid) ? true : false;
+            console.log(`this.isCustom:`,this.isCustom);
+            if(this.isCustom) {
+                //  自定义分享
+                this.$http.get(`/share/video?id=${this.id}`).then(({data}) => {
+                    console.log(`自定义分享data:`,data);
                     if (data.code==200 && data.data){
                         this.direction = data.data.direction;
                         this.videoUrl = this.$.handleAssetsUrl(data.data.url);
@@ -139,6 +98,25 @@ import {mapGetters} from 'vuex'
                             title:'没有视频id',
                             duration: 2000,
                         })
+                    }
+                })
+             } else {
+                // 普通分享
+                this.$http.get(`/common/material?type=1&id=${this.id}&share=1`).then(({data}) => {
+                    console.log(`普通分享data:`,data);
+                    if (data.code==200 && data.data.length){
+                        let video = data.data[0];
+                        this.direction = video.direction;
+                        this.videoUrl = this.$.handleAssetsUrl(video.url);
+                        this.headImgUrl = this.$.handleAssetsUrl(video.userInfo.headImgUrl);
+                        this.userName = video.userInfo.nickname;
+                        this.title = video.title;
+                    } else {
+                        wx.showToast({
+                            icon:'none',
+                            title:'没有视频id',
+                            duration: 2000,
+                        })                        
                     }
                 })
              }
@@ -221,12 +199,12 @@ import {mapGetters} from 'vuex'
                 display: flex;
                 align-items: center;
                 justify-content: space-between;
-                img{
+                .avanta{
                     display: inline-block;
                     border-radius: 50%;
                     width: 75rpx;
                     height: 75rpx;
-                    margin-right: 30rpx;
+                    margin: 0 30rpx 0 24rpx;
                 }
             }
             .share-img{
@@ -358,12 +336,12 @@ import {mapGetters} from 'vuex'
                 display: flex;
                 align-items: center;
                 justify-content: space-between;
-                img{
+                .avanta{
                     display: inline-block;
                     border-radius: 50%;
                     width: 75rpx;
                     height: 75rpx;
-                    margin-right: 30rpx;
+                    margin: 0 30rpx 0 24rpx;
                 }
             }
             .share-img{
