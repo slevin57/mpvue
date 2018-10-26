@@ -14,8 +14,8 @@
                 <div class="user-info">
                     <img :src="headImgUrl" alt="" class="avanta">
                     <span class="username">@{{userName}}</span>
-                    <a href="/pages/share/main?vid=0455981641153">自定义分享</a>
-                    <a href="/pages/share/main?vid=a0513089-70e5-40fe-bdca-82cb9200aed6">基础分享</a>
+                    <!-- <a href="/pages/share/main?vid=0455981641153">自定义分享</a> -->
+                    <!-- <a href="/pages/share/main?vid=a0513089-70e5-40fe-bdca-82cb9200aed6">基础分享</a> -->
                 </div>
                 <button open-type="share" class="share-img">
                     <img src="/static/images/share@2x.png" alt="">
@@ -69,12 +69,17 @@ import {mapGetters} from 'vuex'
         mounted () {
             this.videoContxt = wx.createVideoContext('miniVideo');
         },
-        onLoad (e) {
-            this.id = e.vid;
+        onLoad (query) {
+            console.log(`query:`,query);
+            let vid = query.vid && JSON.parse(query.vid);
+            let scene = decodeURIComponent(query.scene);
+            this.id = vid || scene;
+            console.log(`vid:`,vid);
+            console.log(`scene:`,scene);
             console.log(`this.id:`,this.id);
-            if(this.id===undefined){
+            if(this.id==='undefined'){
                 wx.navigateTo({
-                    url:'/pages/error/main?id=34'
+                    url:'/pages/error/main'
                 })
             }
             // 根据id格式区分普通分享与自定义分享：uuid为普通分享，纯数字为自定义分享

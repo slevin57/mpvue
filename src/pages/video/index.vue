@@ -32,7 +32,7 @@ export default {
   },
 
   created () {
-      console.log(`this:`,this.$store);
+    //   console.log(`this:`,this.$store);
   },
 
   methods: {

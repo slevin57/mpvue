@@ -1,6 +1,6 @@
 <template>
     <div class="page-share">
-        <swiper vertical :indicator-dots="indicatorDots" :duration="duration" :current="current" style="height:100vh;">
+        <!-- <swiper vertical :indicator-dots="indicatorDots" :duration="duration" :current="current" style="height:100vh;">
             <swiper-item class="first-page">
                 <div class="video-wrapper">
                     <div v-if="!playing" class="poster">
@@ -37,39 +37,39 @@
                     <video class="sss" id="fullVideo" src="https://resources.laihua.com/web4/homeindexvideo.mp4" controls ></video>
                 </div>
             </swiper-item>
-        </swiper>
+        </swiper> -->
     </div>
 </template>
 <script>
     export default {
-        data () {
-            return {
-                indicatorDots: false,
-                duration: 500,
-                current: 0,
-                playing: false,
-                videoContxt: {},
-                fullVideo: {},
-            }
-        },
-        mounted () {
-            this.videoContxt = wx.createVideoContext('miniVideo');
-            this.fullVideo = wx.createVideoContext('fullVideo');
-            // this.fullVideo.requestFullScreen(90);
-        },
-        methods:{
-            toggleVideo () {
-                this.playing = true;
-                this.videoContxt.play();
-            },
-            pauseHandler () {
-                this.videoContxt.stop();
-                this.playing = false;
-            },
-            nextPage () {
-                this.current = 1;
-            }
-        }
+        // data () {
+        //     return {
+        //         indicatorDots: false,
+        //         duration: 500,
+        //         current: 0,
+        //         playing: false,
+        //         videoContxt: {},
+        //         fullVideo: {},
+        //     }
+        // },
+        // mounted () {
+        //     this.videoContxt = wx.createVideoContext('miniVideo');
+        //     this.fullVideo = wx.createVideoContext('fullVideo');
+        //     // this.fullVideo.requestFullScreen(90);
+        // },
+        // methods:{
+        //     toggleVideo () {
+        //         this.playing = true;
+        //         this.videoContxt.play();
+        //     },
+        //     pauseHandler () {
+        //         this.videoContxt.stop();
+        //         this.playing = false;
+        //     },
+        //     nextPage () {
+        //         this.current = 1;
+        //     }
+        // }
     }
 </script>
 
