@@ -35,7 +35,7 @@
 					"id": 0,
 					"name": "扫小程序码",
 					"pathName": "pages/share/main",
-					"query": "dd=34&bb=5"
+					"query": "scene=3434"
 				}
 			]
 		}

@@ -6,7 +6,8 @@
             <video id="miniVideo" 
                 :src="videoUrl" 
                 :show-center-play-btn="false"
-                @pause="videoPause()"></video>
+                @pause="videoPauseHdl()"
+                @play="videoPlayHdl()"></video>
             <cover-image v-if="!isPlaying" class="play-icon" src="/static/images/play.png" @click="playVideo()" />
         </div>
         <div class="info-wrapper">
@@ -14,8 +15,8 @@
                 <div class="user-info">
                     <img :src="headImgUrl" alt="" class="avanta">
                     <span class="username">@{{userName}}</span>
-                    <!-- <a href="/pages/share/main?vid=0455981641153">自定义分享</a> -->
-                    <!-- <a href="/pages/share/main?vid=a0513089-70e5-40fe-bdca-82cb9200aed6">基础分享</a> -->
+                    <a href="/pages/share/main?vid=0455981641153">自定义分享</a>
+                    <!-- <a href="/pages/share/main?vid=41358">基础分享</a> -->
                 </div>
                 <button open-type="share" class="share-img">
                     <img src="/static/images/share@2x.png" alt="">
@@ -42,13 +43,13 @@ import {mapGetters} from 'vuex'
         data () {
             return {
                 id:'',//视频id
+                source: '',// 小程序来源
                 isCustom: false,//是否为自定义分享
                 isPlaying: false,
                 videoContxt: {},
                 videoUrl:'',
                 headImgUrl: '',
                 userName: '',
-                title:'',//视频标题
                 thumbnailUrl: '',//视频封面
                 attachUrl: '',//广告图片
                 direction: 1,//1横屏视频2竖屏
@@ -70,37 +71,47 @@ import {mapGetters} from 'vuex'
             this.videoContxt = wx.createVideoContext('miniVideo');
         },
         onLoad (query) {
-            console.log(`query:`,query);
-            let vid = query.vid && JSON.parse(query.vid);
-            let scene = decodeURIComponent(query.scene);
-            this.id = vid || scene;
-            console.log(`vid:`,vid);
-            console.log(`scene:`,scene);
-            console.log(`this.id:`,this.id);
-            if(this.id==='undefined'){
+
+        },
+        onShow () {
+            console.log(`mpvue特有的在小程序onShow周期内获取url参数方法:`,this.$root.$mp.query);
+            let query = this.$root.$mp.query;
+            if (query.vid){//app分享出来的卡片进入
+                this.source = 'vid';
+                this.id = query.vid;
+                this.isCustom = /^[0-9]*$/.test(id) ? true : false;
+                
+            } else if(query.scene){//扫小程序码进入
+                this.source = 'scene';
+                this.id = decodeURIComponent(query.scene);
+                //根据id长度区分普通分享与自定义分享：大于10的为自定义分享，小于10为普通分享
+                this.isCustom = id.length>10 ? true : false;
+            } else if(id==='undefined') {
                 wx.navigateTo({
                     url:'/pages/error/main'
                 })
+                return;
             }
-            // 根据id格式区分普通分享与自定义分享：uuid为普通分享，纯数字为自定义分享
-            this.isCustom = /^[0-9]*$/.test(this.vid) ? true : false;
+            console.log(`query:`,query);
+            console.log(`this.source:`,this.source);
             console.log(`this.isCustom:`,this.isCustom);
             if(this.isCustom) {
                 //  自定义分享
                 this.$http.get(`/share/video?id=${this.id}`).then(({data}) => {
                     console.log(`自定义分享data:`,data);
                     if (data.code==200 && data.data){
+
+                        this.setNavigationBarTitle(data.data.title);
                         this.direction = data.data.direction;
                         this.videoUrl = this.$.handleAssetsUrl(data.data.url);
                         this.headImgUrl = this.$.handleAssetsUrl(data.data.headImage);
                         this.userName = data.data.author;
-                        this.title = data.data.title;
                         this.thumbnailUrl = this.$.handleAssetsUrl(data.data.thumbnailUrl);
                         this.attachUrl = data.data.attachUrl ? this.$.handleAssetsUrl(data.data.attachUrl) : '';
                     } else {
                         wx.showToast({
                             icon:'none',
-                            title:'没有视频id',
+                            title:'请求出错',
                             duration: 2000,
                         })
                     }
@@ -111,29 +122,30 @@ import {mapGetters} from 'vuex'
                     console.log(`普通分享data:`,data);
                     if (data.code==200 && data.data.length){
                         let video = data.data[0];
+                        this.setNavigationBarTitle(video.title);
                         this.direction = video.direction;
                         this.videoUrl = this.$.handleAssetsUrl(video.url);
                         this.headImgUrl = this.$.handleAssetsUrl(video.userInfo.headImgUrl);
                         this.userName = video.userInfo.nickname;
-                        this.title = video.title;
                     } else {
                         wx.showToast({
                             icon:'none',
-                            title:'没有视频id',
+                            title:'请求出错',
                             duration: 2000,
                         })                        
                     }
                 })
              }
         },
-        onShow () {
-            console.log(`mpvue特有的在小程序onShow周期内获取url参数方法:`,this.$root.$mp.query);
+        onHide() {
+            // 页面隐藏到后台时清除缓存数据
+            wx.clearStorage();
         },
         onShareAppMessage (e) {
             let imageUrl = e.target===undefined ? '' : this.thumbnailUrl ;
             return {
                 title: this.title,
-                path: '/pages/sharesingle/main',
+                path: `/pages/share/main?${this.source}=${this.id}`,
                 imageUrl,
             }
         },
@@ -142,7 +154,10 @@ import {mapGetters} from 'vuex'
                 this.videoContxt.play();
                 this.isPlaying = true;
             },
-            videoPause () {
+            videoPlayHdl () {
+                this.isPlaying = true;
+            },
+            videoPauseHdl () {
                 this.isPlaying = false;
             },
             launchAppError (e) {
@@ -151,6 +166,12 @@ import {mapGetters} from 'vuex'
                     icon:'none',
                     duration: 2500,
                     mask: true,
+                })
+            },
+            // 动态设置当前页面title
+            setNavigationBarTitle (title){
+                wx.setNavigationBarTitle({
+                    title,
                 })
             }
         }
