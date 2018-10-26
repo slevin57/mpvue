@@ -79,14 +79,14 @@ import {mapGetters} from 'vuex'
             if (query.vid){//app分享出来的卡片进入
                 this.source = 'vid';
                 this.id = query.vid;
-                this.isCustom = /^[0-9]*$/.test(id) ? true : false;
+                this.isCustom = /^[0-9]*$/.test(this.id) ? true : false;
                 
             } else if(query.scene){//扫小程序码进入
                 this.source = 'scene';
                 this.id = decodeURIComponent(query.scene);
                 //根据id长度区分普通分享与自定义分享：大于10的为自定义分享，小于10为普通分享
-                this.isCustom = id.length>10 ? true : false;
-            } else if(id==='undefined') {
+                this.isCustom = this.id.length>10 ? true : false;
+            } else {
                 wx.navigateTo({
                     url:'/pages/error/main'
                 })
