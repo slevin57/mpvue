@@ -5,6 +5,7 @@
         <div class="video-wrapper">
             <video id="miniVideo" 
                 :src="videoUrl" 
+                :poster="thumbnailUrl"
                 :show-center-play-btn="false"
                 @pause="videoPauseHdl()"
                 @play="videoPlayHdl()"></video>
@@ -15,8 +16,8 @@
                 <div class="user-info">
                     <img :src="headImgUrl" alt="" class="avanta">
                     <span class="username">@{{userName}}</span>
-                    <a href="/pages/share/main?vid=0455981641153">自定义分享</a>
-                    <!-- <a href="/pages/share/main?vid=41358">基础分享</a> -->
+                    <a href="/pages/share/main?vid=cd9d9c8a-f15f-4aa8-a162-4179b37d888a">普通分享</a>
+                    <a href="/pages/share/main?vid=0638824141394">自定义分享</a>
                 </div>
                 <button open-type="share" class="share-img">
                     <img src="/static/images/share@2x.png" alt="">
@@ -24,7 +25,7 @@
             </div>
         </div>
         <div class="ad-wrapper">
-            <img class="bg" :src="attachUrl || '/static/images/bg@2x.png'" alt="">
+            <img class="bg" :src="attachUrl" alt="">
             <div class="ad-container">
                 <img v-if="!isCustom" src="/static/images/logo@2x.png" class="logo-img" alt="">
                 <p v-if="!isCustom" class="slogan">像做PPT一样做动画视频</p>
@@ -47,12 +48,13 @@ import {mapGetters} from 'vuex'
                 isCustom: false,//是否为自定义分享
                 isPlaying: false,
                 videoContxt: {},
+                direction: 1,//1横屏视频2竖屏
+                title: '', //视频标题
                 videoUrl:'',
+                thumbnailUrl: '',//视频封面
                 headImgUrl: '',
                 userName: '',
-                thumbnailUrl: '',//视频封面
-                attachUrl: '',//广告图片
-                direction: 1,//1横屏视频2竖屏
+                attachUrl: '/static/images/bg@2x.png',//广告图片
             }
         },
         computed : {
@@ -71,7 +73,7 @@ import {mapGetters} from 'vuex'
             this.videoContxt = wx.createVideoContext('miniVideo');
         },
         onLoad (query) {
-
+            this.setNavigationBarColor();
         },
         onShow () {
             console.log(`mpvue特有的在小程序onShow周期内获取url参数方法:`,this.$root.$mp.query);
@@ -102,12 +104,14 @@ import {mapGetters} from 'vuex'
                     if (data.code==200 && data.data){
 
                         this.setNavigationBarTitle(data.data.title);
+                        this.title = data.data.title;
                         this.direction = data.data.direction;
                         this.videoUrl = this.$.handleAssetsUrl(data.data.url);
                         this.headImgUrl = this.$.handleAssetsUrl(data.data.headImage);
                         this.userName = data.data.author;
                         this.thumbnailUrl = this.$.handleAssetsUrl(data.data.thumbnailUrl);
-                        this.attachUrl = data.data.attachUrl ? this.$.handleAssetsUrl(data.data.attachUrl) : '';
+                        this.attachUrl = data.data.attachUrl ? this.$.handleAssetsUrl(data.data.attachUrl) : '/static/images/bg@2x.png';
+                        console.log(`this.attachUrl:`,this.attachUrl);
                     } else {
                         wx.showToast({
                             icon:'none',
@@ -123,10 +127,14 @@ import {mapGetters} from 'vuex'
                     if (data.code==200 && data.data.length){
                         let video = data.data[0];
                         this.setNavigationBarTitle(video.title);
+                        this.title = video.title;
                         this.direction = video.direction;
                         this.videoUrl = this.$.handleAssetsUrl(video.url);
                         this.headImgUrl = this.$.handleAssetsUrl(video.userInfo.headImgUrl);
                         this.userName = video.userInfo.nickname;
+                        this.thumbnailUrl = this.$.handleAssetsUrl(video.thumbnailUrl);
+                        this.attachUrl = '/static/images/bg@2x.png';
+                        console.log(`this.attachUrl:`,this.attachUrl);
                     } else {
                         wx.showToast({
                             icon:'none',
@@ -143,6 +151,8 @@ import {mapGetters} from 'vuex'
         },
         onShareAppMessage (e) {
             let imageUrl = e.target===undefined ? '' : this.thumbnailUrl ;
+            console.log(`imageUrl:`,imageUrl);
+            console.log(`this.title:`,this.title);
             return {
                 title: this.title,
                 path: `/pages/share/main?${this.source}=${this.id}`,
@@ -168,11 +178,23 @@ import {mapGetters} from 'vuex'
                     mask: true,
                 })
             },
-            // 动态设置当前页面title
+            // 动态设置当前页面导航栏title
             setNavigationBarTitle (title){
                 wx.setNavigationBarTitle({
                     title,
                 })
+            },
+            // 解决ios和android导航栏颜色不一样的问题；也可以用于动态设置当前页面导航栏颜色
+            setNavigationBarColor (){
+                console.log(`111:`,111);
+                wx.setNavigationBarColor({
+                    frontColor: '#000000',
+                    backgroundColor: '#ffffff',
+                    animation: {
+                        duration: 400,
+                        timingFunc: 'easeIn'
+                    }
+                })                
             }
         }
     }
