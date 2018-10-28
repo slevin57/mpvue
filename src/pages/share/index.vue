@@ -219,6 +219,7 @@ import {mapGetters} from 'vuex'
 </script>
 
 <style scoped lang="scss">
+// 横版视频样式
 .page-share-horizental{
     width: 100%;
     height: 100vh;
@@ -362,6 +363,7 @@ import {mapGetters} from 'vuex'
         }
     }
 }
+// 竖版视频样式
 .page-share-vertical{
     width: 100%;
     height: 100vh;
