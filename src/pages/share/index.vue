@@ -16,16 +16,26 @@
                 <div class="user-info">
                     <img :src="headImgUrl" alt="" class="avanta">
                     <span class="username">@{{userName}}</span>
-                    <a href="/pages/share/main?vid=cd9d9c8a-f15f-4aa8-a162-4179b37d888a">普通分享</a>
-                    <a href="/pages/share/main?vid=0638824141394">自定义分享</a>
+                    <!-- <a href="/pages/share/main?vid=cd9d9c8a-f15f-4aa8-a162-4179b37d888a">普通分享</a> -->
+                    <!-- <a href="/pages/share/main?vid=0638824141394">自定义分享</a> -->
                 </div>
                 <button open-type="share" class="share-img">
                     <img src="/static/images/share@2x.png" alt="">
                 </button>
             </div>
         </div>
-        <div class="ad-wrapper">
-            <img class="bg" :src="attachUrl" alt="">
+        <div class="ad-wrapper" id="adWrapper">
+            <div class="img-container">
+                <!-- <image class="bg" :src="attachUrl" mode="widthFix"></image> -->
+                <!-- <image style="width:100%;height:340rpx;" :src="attachUrl" mode="scaleToFill"></image> -->
+                <!-- <image class="bg"  src="/static/images/bg@2x.png" mode="widthFix"></image> -->
+                <!-- <img class="bg" :src="attachUrl" alt=""> -->
+                <!-- <img style="width:100%;height:100%;" :src="attachUrl" alt=""> -->
+                <!-- <img class="bg" src="/static/images/bg@2x.png" alt=""> -->
+                <!-- <img class="bg" src="https://resources.laihua.com/2018-10-25/e948cd60-d83c-11e8-83ec-13730645ec8d.png" alt=""> -->
+                <!-- <img class="bg" :src="attachUrl" > -->
+                <image class="bg" :src="attachUrl" mode="scaleToFill"></image>
+            </div>
             <div class="ad-container">
                 <img v-if="!isCustom" src="/static/images/logo@2x.png" class="logo-img" alt="">
                 <p v-if="!isCustom" class="slogan">像做PPT一样做动画视频</p>
@@ -55,6 +65,7 @@ import {mapGetters} from 'vuex'
                 headImgUrl: '',
                 userName: '',
                 attachUrl: '/static/images/bg@2x.png',//广告图片
+                imgHeight: 1,
             }
         },
         computed : {
@@ -186,7 +197,6 @@ import {mapGetters} from 'vuex'
             },
             // 解决ios和android导航栏颜色不一样的问题；也可以用于动态设置当前页面导航栏颜色
             setNavigationBarColor (){
-                console.log(`111:`,111);
                 wx.setNavigationBarColor({
                     frontColor: '#000000',
                     backgroundColor: '#ffffff',
@@ -195,6 +205,14 @@ import {mapGetters} from 'vuex'
                         timingFunc: 'easeIn'
                     }
                 })                
+            },
+            // 查询节点信息，id为带#的字符串，如：'#id'
+            createSelectorQuery (id){
+                let query = wx.createSelectorQuery();
+                query.select(id).boundingClientRect();
+                query.exec((res) => {
+                    console.log(`res=======:`,res);
+                })
             }
         }
     }
@@ -276,12 +294,18 @@ import {mapGetters} from 'vuex'
         width: 100%;
         position: relative;
         flex: 1;
-        flex-shrink: 1;
-        // display:-webkit-box;
-        .bg{
-            display: block;
+        .img-container{
+            position: absolute;
+            left: 0;
+            top: 0;
             width: 100%;
             height: 100%;
+            background-color: skyblue;
+            .bg{
+                display: inline-block;
+                width: 100%;
+                height: 100%;
+            }
         }
         .ad-container{
             position: absolute;
@@ -413,12 +437,18 @@ import {mapGetters} from 'vuex'
         width: 100%;
         position: relative;
         flex: 1;
-        flex-shrink: 1;
-        // display:-webkit-box;
-        .bg{
-            display: block;
+        .img-container{
+            position: absolute;
+            left: 0;
+            top: 0;
             width: 100%;
             height: 100%;
+            background-color: skyblue;
+            .bg{
+                display: inline-block;
+                width: 100%;
+                height: 100%;
+            }
         }
         .ad-container{
             position: absolute;
