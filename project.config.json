@@ -29,13 +29,22 @@
 			"list": []
 		},
 		"miniprogram": {
-			"current": 0,
+			"current": 1,
 			"list": [
 				{
 					"id": 0,
-					"name": "扫小程序码",
+					"name": "web普通分享",
 					"pathName": "pages/share/main",
-					"query": "scene=3434"
+					"query": "scene=41334",
+					"scene": "1047"
+				},
+				{
+					"id": 1,
+					"name": "web个性化分享",
+					"pathName": "pages/share/main",
+					"query": "scene=0985097641369",
+					"scene": "1036",
+					"referrerInfo": {}
 				}
 			]
 		}

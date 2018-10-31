@@ -2,27 +2,26 @@
 <template>
 <div>
     <div :class="[direction==1 ? 'page-share-horizental' : 'page-share-vertical']">
-        <div class="video-wrapper" v-if="!guideVisible" :style="{height:videoHeight}">
+        <div class="video-wrapper" v-if="!guideVisible">
             <video id="miniVideo" 
                 :src="videoUrl" 
                 :poster="thumbnailUrl"
-                :show-center-play-btn="true"
+                :show-center-play-btn="false"
                 @pause="videoPauseHdl()"
                 @play="videoPlayHdl()"
                 @ended="videoEndHdl()"></video>
-            <!-- <cover-image v-if="!isPlaying" class="play-icon" src="/static/images/play.png" @click="playVideo()" /> -->
+            <cover-image v-if="!isPlaying" class="play-icon" src="/static/images/play.png" @click="playVideo()" />
         </div>
-        <div class="info-wrapper" :style="{height:infoHeight}">
+        <div class="info-wrapper">
             <div class="info">
                 <div class="user-info">
                     <img :src="headImgUrl" alt="" class="avanta">
                     <span class="username">@{{userName}}</span>
-                    <!-- <a href="/pages/share/main?vid=cd9d9c8a-f15f-4aa8-a162-4179b37d888a">app普通分享</a> -->
-                    <!-- <a href="/pages/share/main?vid=0638824141394">app自定义分享</a> -->
-                    <!-- <a href="/pages/share/main?scene=41334">web普通分享</a> -->
-                    <!-- <a href="/pages/share/main?scene">web个性化分享</a> -->
+                    <!-- <a href="/pages/share/main?vid=cd9d9c8a-f15f-4aa8-a162-4179b37d888a">普通分享</a> -->
+                    <!-- <a href="/pages/share/main?vid=0638824141394">自定义分享</a> -->
+                    <!-- <a href="/pages/scalevideo/main?vid=0638824141394">test</a> -->
                 </div>
-                <div v-if="direction==2" class="up-icon"><img src="/static/images/up-icon.png" alt=""> </div>
+                <div class="up-icon"><img src="/static/images/up-icon.png" alt=""> </div>
                 <button open-type="share" class="share-img">
                     <img src="/static/images/share@2x.png" alt="">
                 </button>
@@ -38,13 +37,13 @@
                 <!-- <img class="bg" src="/static/images/bg@2x.png" alt=""> -->
                 <!-- <img class="bg" src="https://resources.laihua.com/2018-10-25/e948cd60-d83c-11e8-83ec-13730645ec8d.png" alt=""> -->
                 <!-- <img class="bg" :src="attachUrl" > -->
-                <image class="bg" v-if="direction==1" :src="attachUrl || '/static/images/bg@2x.png'" mode="scaleToFill"></image>
-                <image class="bg" v-if="direction==2" :src="attachUrl || '/static/images/bg@2x-v.png'" mode="scaleToFill"></image>
+                <image class="bg" v-if="direction==1" :src="'/static/images/bg@2x.png' || attachUrl" mode="scaleToFill"></image>
+                <image class="bg" v-if="direction==2" :src="'/static/images/bg@2x-v.png' || attachUrl" mode="scaleToFill"></image>
             </div>
             <div class="ad-container">
-                <img v-if="direction==1 && !isCustom" :src="logoUrlH" class="logo-img logo-h" alt="">
-                <img v-if="direction==2 && !isCustom" :src="logoUrlV" class="logo-img logo-v" alt="">
-                <p v-if="slogan" class="slogan" :style="{color:sloganColor}">{{slogan}}</p>
+                <img v-if="!isCustom && direction==1" src="/static/images/hogo-h.png" class="logo-img logo-h" alt="">
+                <img v-if="!isCustom && direction==2" src="/static/images/logo-v.png" class="logo-img logo-v" alt="">
+                <p v-if="!isCustom" class="slogan">像做PPT一样做动画视频</p>
                 <div class="options">
                     <!-- <div class="option home">
                         <img src="/static/images/home@2x.png" class="option-icon home-icon">
@@ -75,7 +74,7 @@
             </div>
             <div class="step-box step2">
                 <span class="step">2</span>
-                <p class="hint">点击“相关公众号”</br>关注来画视频</p>
+                <p class="hint">点击“相关公众号”</br>关注关于来画视频</p>
             </div>
         </div>
     </div>
@@ -83,7 +82,6 @@
 </template>
 <script>
 import {mapGetters} from 'vuex'
-// 竖版视频测试地址:https://resources.laihua.com/2018-10-26/2f7761b0-d8c5-11e8-83ec-13730645ec8d.mp4
     export default {
         data () {
             return {
@@ -92,22 +90,15 @@ import {mapGetters} from 'vuex'
                 isCustom: false,//是否为自定义分享
                 isPlaying: false,
                 videoContxt: {},
-                direction: 1,//1横屏视频2竖屏
-                title: '分享页', //视频标题
+                direction: 2,//1横屏视频2竖屏
+                title: '', //视频标题
                 videoUrl:'',
                 thumbnailUrl: '',//视频封面
                 headImgUrl: '',
                 userName: '',
-                attachUrl: '',//个性化分享广告图片
-                logoUrlH:'/static/images/hogo-h.png',
-                logoUrlV:'/static/images/hogo-v.png',
-                slogan: '像做PPT一样做动画视频',//个性化分享slogan
-                sloganColor:'',
-                button: '', //个性化分享button
+                attachUrl: '',//广告图片
                 imgHeight: 1,
                 guideVisible: false,
-                platform: '', // 设备操作系统
-                windowHeight:0,//屏幕可视高度
             }
         },
         computed : {
@@ -115,32 +106,18 @@ import {mapGetters} from 'vuex'
                 'options'
             ]),
             canOpenApp () {
-                if ([1036,1069].indexOf(this.options.scene) != -1 && this.platform!='android'){
+                if ([1036,1069].indexOf(this.options.scene) != -1){
                     return true;
                 } else {
                     return false;
                 }
             },
-            videoHeight () {
-                return this.direction==2 ? `${this.windowHeight*.9}px` : ''
-            },
-            infoHeight () {
-                return this.direction==2 ? `${this.windowHeight*.1}px` : ''
-            }
         },
         mounted () {
             this.videoContxt = wx.createVideoContext('miniVideo');
         },
         onLoad (query) {
             this.setNavigationBarColor();
-            let self = this;
-            wx.getSystemInfo({
-                success (system) {
-                    console.log(`system:`,system);
-                    self.platform = system.platform;
-                    self.windowHeight = system.windowHeight;
-                }
-            })
         },
         onShow () {
             console.log(`mpvue特有的在小程序onShow周期内获取url参数方法:`,this.$root.$mp.query);
@@ -171,18 +148,13 @@ import {mapGetters} from 'vuex'
                     if (data.code==200 && data.data){
 
                         this.setNavigationBarTitle(data.data.title);
-                        this.direction = data.data.direction;
                         this.title = data.data.title;
+                        this.direction = data.data.direction;
                         this.videoUrl = this.$.handleAssetsUrl(data.data.url);
                         this.headImgUrl = this.$.handleAssetsUrl(data.data.headImage);
                         this.userName = data.data.author;
                         this.thumbnailUrl = this.$.handleAssetsUrl(data.data.thumbnailUrl);
                         this.attachUrl = data.data.attachUrl ? this.$.handleAssetsUrl(data.data.attachUrl) : '';
-                        this.direction==1 ? this.logoUrlH = data.data.thumbnailUrl : this.logoUrlV = data.data.thumbnailUrl;
-                        let sloganObj = data.data.slogan && JSON.parse(data.data.slogan);
-                        this.slogan = sloganObj.description;
-                        this.sloganColor = sloganObj.color;
-
                         console.log(`this.attachUrl:`,this.attachUrl);
                     } else {
                         wx.showToast({
@@ -194,7 +166,7 @@ import {mapGetters} from 'vuex'
                 })
              } else {
                 // 普通分享
-                this.$http.get(`/common/material?type=1&share=1&id=${this.id}`).then(({data}) => {
+                this.$http.get(`/common/material?type=1&id=${this.id}&share=1`).then(({data}) => {
                     console.log(`普通分享data:`,data);
                     if (data.code==200 && data.data.length){
                         let video = data.data[0];
@@ -241,6 +213,7 @@ import {mapGetters} from 'vuex'
                 this.isPlaying = false;
             },
             videoEndHdl () {
+                console.log(`222:`,222);
                 this.isPlaying = false;
             },
             launchAppError (e) {
@@ -296,6 +269,7 @@ import {mapGetters} from 'vuex'
         box-sizing: border-box;
         width: 750rpx;
         height: 421rpx;
+        // height: 710rpx;
         position: relative;
         video{
             object-fit: fill;
@@ -540,6 +514,7 @@ import {mapGetters} from 'vuex'
 // 竖版视频样式
 .page-share-vertical{
     width: 100%;
+    height: 100vh;
     display: flex;
     flex-direction: column;
     // -webkit-box-orient:vertical;
@@ -547,7 +522,9 @@ import {mapGetters} from 'vuex'
         font-size: 14px;
         box-sizing: border-box;
         width: 750rpx;
+        flex: 1;
         // height: 421rpx;
+        height: 710rpx;
         position: relative;
         video{
             object-fit: fill;
@@ -565,7 +542,7 @@ import {mapGetters} from 'vuex'
         }
     }
     .info-wrapper{
-        // height: 107rpx;
+        height: 107rpx;
         width: 100%;
         .info{
             width: 100%;
@@ -608,17 +585,17 @@ import {mapGetters} from 'vuex'
             }
 
             @keyframes up {
-                0% {
-                    // opacity: 0;
-                    transform: translate(0, 0);
+                0%, 30% {
+                    opacity: 0;
+                    transform: translate(0, 10px);
                 }
-                50% {
-                    // opacity: .5;
-                    transform: translate(0, -15rpx);
+                60% {
+                    opacity: 1;
+                    transform: translate(0, 0);
                 }
                 100% {
-                    // opacity: 1;
-                    transform: translate(0, 0);
+                    opacity: 0;
+                    transform: translate(0, -8px);
                 }
             }
             .share-img{
@@ -649,6 +626,7 @@ import {mapGetters} from 'vuex'
             top: 0;
             width: 100%;
             height: 100%;
+            background-color: skyblue;
             .bg{
                 display: inline-block;
                 width: 100%;
@@ -679,7 +657,7 @@ import {mapGetters} from 'vuex'
             }
             .slogan{
                 font-size: 18px;
-                color: #fff;
+                color: #bebebe;
                 font-weight: bold;
             }
             .next-img{
@@ -689,7 +667,7 @@ import {mapGetters} from 'vuex'
                 bottom: 49rpx;
             }
             .options {
-                position: absolute;
+                position: fixed;
                 right: 0;
                 bottom: 121rpx;
                 .option{
