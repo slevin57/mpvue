@@ -4,7 +4,8 @@
     "pages/shareswiper/main",
     "pages/video/main",
     "pages/error/main",
-    "pages/scalevideo/main"
+    "pages/scalevideo/main",
+    "pages/testlist/main"
   ],
   "window": {
     "backgroundTextStyle": "light",

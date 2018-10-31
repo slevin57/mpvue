@@ -17,12 +17,8 @@
                 <div class="user-info">
                     <img :src="headImgUrl" alt="" class="avanta">
                     <span class="username">@{{userName}}</span>
-                    <!-- <a href="/pages/share/main?vid=cd9d9c8a-f15f-4aa8-a162-4179b37d888a">app普通分享</a> -->
-                    <!-- <a href="/pages/share/main?vid=0638824141394">app自定义分享</a> -->
-                    <!-- <a href="/pages/share/main?scene=41334">web普通分享</a> -->
-                    <!-- <a href="/pages/share/main?scene">web个性化分享</a> -->
                 </div>
-                <div v-if="direction==2" class="up-icon"><img src="/static/images/up-icon.png" alt=""> </div>
+                <div v-if="direction==2 && upiconVisible" class="up-icon"><img src="/static/images/up-icon.png" alt=""> </div>
                 <button open-type="share" class="share-img">
                     <img src="/static/images/share@2x.png" alt="">
                 </button>
@@ -30,14 +26,6 @@
         </div>
         <div class="ad-wrapper" id="adWrapper">
             <div class="img-container">
-                <!-- <image class="bg" :src="attachUrl" mode="widthFix"></image> -->
-                <!-- <image style="width:100%;height:340rpx;" :src="attachUrl" mode="scaleToFill"></image> -->
-                <!-- <image class="bg"  src="/static/images/bg@2x.png" mode="widthFix"></image> -->
-                <!-- <img class="bg" :src="attachUrl" alt=""> -->
-                <!-- <img style="width:100%;height:100%;" :src="attachUrl" alt=""> -->
-                <!-- <img class="bg" src="/static/images/bg@2x.png" alt=""> -->
-                <!-- <img class="bg" src="https://resources.laihua.com/2018-10-25/e948cd60-d83c-11e8-83ec-13730645ec8d.png" alt=""> -->
-                <!-- <img class="bg" :src="attachUrl" > -->
                 <image class="bg" v-if="direction==1" :src="attachUrl || '/static/images/bg@2x.png'" mode="scaleToFill"></image>
                 <image class="bg" v-if="direction==2" :src="attachUrl || '/static/images/bg@2x-v.png'" mode="scaleToFill"></image>
             </div>
@@ -64,11 +52,13 @@
                         <span class="name">公众号</span>
                     </div>
                 </div>
+                <a style="position:absolute;bottom:0;left:0;" href="/pages/testlist/main">test list</a>
             </div>
         </div>
         <div class="guide" v-if="guideVisible" @click="showGuide(false)">
             <div class="bg"></div>
-            <img class="guide-bg" src="/static/images/guide-bg.png" alt="">
+            <image class="guide-bg" src="/static/images/guide-bg.png" alt=""></image>
+            <p class="close-btn">点击返回</p>
             <div class="step-box step1">
                 <span class="step">1</span>
                 <p class="hint">点按右上角“...”</br>关于来画视频</p>
@@ -88,7 +78,7 @@ import {mapGetters} from 'vuex'
         data () {
             return {
                 id:'',//视频id
-                source: '',// 小程序来源
+                source: '',// 小程序来源，vid是app，scene是web和uwp
                 isCustom: false,//是否为自定义分享
                 isPlaying: false,
                 videoContxt: {},
@@ -108,6 +98,7 @@ import {mapGetters} from 'vuex'
                 guideVisible: false,
                 platform: '', // 设备操作系统
                 windowHeight:0,//屏幕可视高度
+                upiconVisible: true,
             }
         },
         computed : {
@@ -156,7 +147,7 @@ import {mapGetters} from 'vuex'
                 //根据id长度区分普通分享与自定义分享：大于10的为自定义分享，小于10为普通分享
                 this.isCustom = this.id.length>10 ? true : false;
             } else {
-                wx.navigateTo({
+                wx.redirectTo({
                     url:'/pages/error/main'
                 })
                 return;
@@ -176,18 +167,20 @@ import {mapGetters} from 'vuex'
                         this.videoUrl = this.$.handleAssetsUrl(data.data.url);
                         this.headImgUrl = this.$.handleAssetsUrl(data.data.headImage);
                         this.userName = data.data.author;
-                        this.thumbnailUrl = this.$.handleAssetsUrl(data.data.thumbnailUrl);
+                        let screen = data.data.screen;
+                        let thumbnail = data.data.thumbnailUrl;
+                        this.thumbnailUrl = this.$.handleAssetsUrl(screen || data.data.thumbnailUrl);
                         this.attachUrl = data.data.attachUrl ? this.$.handleAssetsUrl(data.data.attachUrl) : '';
                         this.direction==1 ? this.logoUrlH = data.data.thumbnailUrl : this.logoUrlV = data.data.thumbnailUrl;
                         let sloganObj = data.data.slogan && JSON.parse(data.data.slogan);
-                        this.slogan = sloganObj.description;
-                        this.sloganColor = sloganObj.color;
+                        this.slogan = sloganObj && sloganObj.description && sloganObj.description;
+                        this.sloganColor = sloganObj && sloganObj.color && sloganObj.color;
 
-                        console.log(`this.attachUrl:`,this.attachUrl);
+                        // console.log(`this.attachUrl:`,this.attachUrl);
                     } else {
                         wx.showToast({
                             icon:'none',
-                            title:'请求出错',
+                            title:'返回数据错误',
                             duration: 2000,
                         })
                     }
@@ -204,13 +197,15 @@ import {mapGetters} from 'vuex'
                         this.videoUrl = this.$.handleAssetsUrl(video.url);
                         this.headImgUrl = this.$.handleAssetsUrl(video.userInfo.headImgUrl);
                         this.userName = video.userInfo.nickname;
-                        this.thumbnailUrl = this.$.handleAssetsUrl(video.thumbnailUrl);
+                        let screen = video.screen && video.screen;
+                        let thumbnail = video.thumbnailUrl.split(',')[0];
+                        this.thumbnailUrl = this.$.handleAssetsUrl(screen || video.thumbnailUrl);
                         this.attachUrl = '';
                         console.log(`this.attachUrl:`,this.attachUrl);
                     } else {
                         wx.showToast({
                             icon:'none',
-                            title:'请求出错',
+                            title:'返回数据错误',
                             duration: 2000,
                         })                        
                     }
@@ -220,6 +215,9 @@ import {mapGetters} from 'vuex'
         onHide() {
             // 页面隐藏到后台时清除缓存数据
             wx.clearStorage();
+        },
+        onPageScroll (e) {
+            this.upiconVisible = e.scrollTop > 10 ? false : true;
         },
         onShareAppMessage (e) {
             let imageUrl = e.target===undefined ? '' : this.thumbnailUrl ;
@@ -369,6 +367,9 @@ import {mapGetters} from 'vuex'
                 display: inline-block;
                 width: 100%;
                 height: 100%;
+                position: absolute;
+                top: 0;
+                bottom: 0;
             }
         }
         .ad-container{
@@ -653,6 +654,9 @@ import {mapGetters} from 'vuex'
                 display: inline-block;
                 width: 100%;
                 height: 100%;
+                position: absolute;
+                top: 0;
+                bottom: 0;
             }
         }
         .ad-container{
