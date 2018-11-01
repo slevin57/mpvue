@@ -56,7 +56,8 @@
             </div>
         </div>
         <div class="guide" v-if="guideVisible" @click="showGuide(false)">
-            <div class="bg"></div>
+            <img src="/static/images/guide.png" alt="" style="width:100%;height:100%;">
+            <!-- <div class="bg"></div>
             <image class="guide-bg" src="/static/images/guide-bg.png" alt=""></image>
             <p class="close-btn">点击返回</p>
             <div class="step-box step1">
@@ -66,7 +67,7 @@
             <div class="step-box step2">
                 <span class="step">2</span>
                 <p class="hint">点击“相关公众号”</br>关注来画视频</p>
-            </div>
+            </div> -->
         </div>
     </div>
 </div>
