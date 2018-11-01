@@ -414,7 +414,8 @@ import {mapGetters} from 'vuex'
             justify-content: center;
             align-items: center;
             .logo-img{
-                display: inline-block;
+                display: flex;
+                align-items: center;
                 margin-bottom: 59rpx;
                 // img {
                 //     object-fit: cover;
@@ -718,8 +719,9 @@ import {mapGetters} from 'vuex'
             justify-content: center;
             align-items: center;
             .logo-img{
-                display: inline-block;
                 margin-bottom: 59rpx;
+                display: flex;
+                align-items: center;
                 // img {
                 //     object-fit: cover;
                 // }
