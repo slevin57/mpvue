@@ -238,6 +238,7 @@ import {mapGetters} from 'vuex'
             this.logoUrl = '';
             this.slogan = '';
             this.attachUrl = '';
+            this.guideVisible = false;
         },
         onPageScroll (e) {
             this.upiconVisible = e.scrollTop > 10 ? false : true;
