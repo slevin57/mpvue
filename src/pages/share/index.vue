@@ -150,10 +150,13 @@ import {mapGetters} from 'vuex'
                 //根据id长度区分普通分享与自定义分享：大于10的为自定义分享，小于10为普通分享
                 this.isCustom = this.id.length>10 ? true : false;
             } else {
-                wx.redirectTo({
-                    url:'/pages/error/main'
-                })
-                return;
+                this.source = 'scene';
+                this.id = '10699337135385';
+                this.isCustom = true;
+                // wx.redirectTo({
+                //     url:'/pages/error/main'
+                // })
+                // return;
             }
             console.log(`query:`,query);
             console.log(`this.source:`,this.source);
@@ -201,7 +204,7 @@ import {mapGetters} from 'vuex'
                 // 普通分享
                 this.$http.get(`/common/material?type=1&share=1&id=${this.id}`).then(({data}) => {
                     console.log(`普通分享data:`,data);
-                    if (data.code==200 && data.data.length){
+                    if (data.code==200 && data.data && data.data.length){
                         let video = data.data[0];
                         this.setNavigationBarTitle(video.title);
                         this.title = video.title;
