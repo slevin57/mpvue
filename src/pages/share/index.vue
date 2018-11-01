@@ -93,8 +93,7 @@ import {mapGetters} from 'vuex'
                 attachUrl: '',//个性化分享广告图片
                 logoUrl:'',
                 slogan: '像做PPT一样做动画视频',//个性化分享slogan
-                sloganColor:'',
-                button: '', //个性化分享button
+                sloganColor:'#fff',
                 imgHeight: 1,
                 guideVisible: false,
                 platform: '', // 设备操作系统
@@ -205,13 +204,15 @@ import {mapGetters} from 'vuex'
                         this.title = video.title;
                         this.direction = video.direction;
                         this.videoUrl = this.$.handleAssetsUrl(video.url);
-                        this.headImgUrl = this.$.handleAssetsUrl(video.userInfo.headImgUrl);
-                        this.userName = video.userInfo.nickname;
                         let screen = video.screen && video.screen;
                         let thumbnail = video.thumbnailUrl.split(',')[0];
                         this.thumbnailUrl = this.$.handleAssetsUrl(screen || video.thumbnailUrl);
+                        this.headImgUrl = this.$.handleAssetsUrl(video.userInfo.headImgUrl);
+                        this.userName = video.userInfo.nickname;
                         this.logoUrl = this.direction==1 ? 'https://resources.laihua.com/miniapp/logo-h.png' : 'https://resources.laihua.com/miniapp/logo-v.png';
                         this.attachUrl = '';
+                        this.slogan ='像做PPT一样做动画视频';
+                        this.sloganColor = '#fff';
                         console.log(`this.attachUrl:`,this.attachUrl);
                     } else {
                         wx.showToast({
@@ -226,6 +227,14 @@ import {mapGetters} from 'vuex'
         onHide() {
             // 页面隐藏到后台时清除缓存数据
             wx.clearStorage();
+            this.direction = 1;
+            this.videoUrl = '';
+            this.thumbnailUrl = '';
+            this.headImgUrl = '';
+            this.userName = '';
+            this.logoUrl = '';
+            this.slogan = '';
+            this.attachUrl = '';
         },
         onPageScroll (e) {
             this.upiconVisible = e.scrollTop > 10 ? false : true;
