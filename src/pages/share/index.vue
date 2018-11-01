@@ -19,19 +19,20 @@
                     <span class="username">@{{userName}}</span>
                 </div>
                 <div v-if="direction==2 && upiconVisible" class="up-icon"><img src="/static/images/up-icon.png" alt=""> </div>
-                <button open-type="share" class="share-img">
-                    <img src="/static/images/share@2x.png" alt="">
-                </button>
+                <div class="share-img-box">
+                    <button open-type="share" class="share-img">
+                        <img src="/static/images/share@2x.png" alt="">
+                    </button>
+                </div>
             </div>
         </div>
         <div class="ad-wrapper" id="adWrapper">
             <div class="img-container">
-                <image class="bg" v-if="direction==1" :src="attachUrl || '/static/images/bg@2x.png'" mode="scaleToFill"></image>
-                <image class="bg" v-if="direction==2" :src="attachUrl || '/static/images/bg@2x-v.png'" mode="scaleToFill"></image>
+                <image class="bg" v-if="direction==1" :src="attachUrl || 'https://resources.laihua.com/miniapp/bg-horizon.png'" mode="scaleToFill"></image>
+                <image class="bg" v-if="direction==2" :src="attachUrl || 'https://resources.laihua.com/miniapp/bg-vertical.png'" mode="scaleToFill"></image>
             </div>
             <div class="ad-container">
-                <img v-if="direction==1 && !isCustom" :src="logoUrlH" class="logo-img logo-h" alt="">
-                <img v-if="direction==2 && !isCustom" :src="logoUrlV" class="logo-img logo-v" alt="">
+                <img :src="logoUrl" alt="" :class="['logo-img',direction==1 ? 'logo-h' : 'logo-v']">
                 <p v-if="slogan" class="slogan" :style="{color:sloganColor}">{{slogan}}</p>
                 <div class="options">
                     <!-- <div class="option home">
@@ -45,18 +46,18 @@
                         </div>
                         <span class="name">APP</span>
                     </button>
-                    <div class="option code" @click="showGuide(true)">
+                    <div v-if="!isCustom" class="option code" @click="showGuide(true)">
                         <div class="option-icon code-icon">
                             <img src="/static/images/code@2x.png" >
                         </div>
                         <span class="name">公众号</span>
                     </div>
                 </div>
-                <a style="position:absolute;bottom:0;left:0;" href="/pages/testlist/main">test list</a>
+                <!-- <a style="position:absolute;bottom:0;left:0;" href="/pages/testlist/main">test list</a> -->
             </div>
         </div>
         <div class="guide" v-if="guideVisible" @click="showGuide(false)">
-            <img src="/static/images/guide.png" alt="" style="width:100%;height:100%;">
+            <img src="https://resources.laihua.com/miniapp/guide.png" alt="" style="width:100%;height:100%;">
             <!-- <div class="bg"></div>
             <image class="guide-bg" src="/static/images/guide-bg.png" alt=""></image>
             <p class="close-btn">点击返回</p>
@@ -90,8 +91,7 @@ import {mapGetters} from 'vuex'
                 headImgUrl: '',
                 userName: '',
                 attachUrl: '',//个性化分享广告图片
-                logoUrlH:'/static/images/hogo-h.png',
-                logoUrlV:'/static/images/hogo-v.png',
+                logoUrl:'',
                 slogan: '像做PPT一样做动画视频',//个性化分享slogan
                 sloganColor:'',
                 button: '', //个性化分享button
@@ -172,7 +172,16 @@ import {mapGetters} from 'vuex'
                         let thumbnail = data.data.thumbnailUrl;
                         this.thumbnailUrl = this.$.handleAssetsUrl(screen || data.data.thumbnailUrl);
                         this.attachUrl = data.data.attachUrl ? this.$.handleAssetsUrl(data.data.attachUrl) : '';
-                        this.direction==1 ? this.logoUrlH = data.data.thumbnailUrl : this.logoUrlV = data.data.thumbnailUrl;
+                        // this.direction==1 ? this.logoUrlH = data.data.watermark : this.logoUrlV = data.data.watermark;
+                        if(data.data.watermark){
+                            this.logoUrl = this.$.handleAssetsUrl(data.data.watermark);
+                        } else {
+                            if(this.direction==1){
+                                this.logoUrl = 'https://resources.laihua.com/miniapp/logo-h.png';
+                            } else if(this.direction==2){
+                                this.logoUrl = 'https://resources.laihua.com/miniapp/logo-v.png'
+                            }
+                        }
                         let sloganObj = data.data.slogan && JSON.parse(data.data.slogan);
                         this.slogan = sloganObj && sloganObj.description && sloganObj.description;
                         this.sloganColor = sloganObj && sloganObj.color && sloganObj.color;
@@ -201,6 +210,7 @@ import {mapGetters} from 'vuex'
                         let screen = video.screen && video.screen;
                         let thumbnail = video.thumbnailUrl.split(',')[0];
                         this.thumbnailUrl = this.$.handleAssetsUrl(screen || video.thumbnailUrl);
+                        this.logoUrl = this.direction==1 ? 'https://resources.laihua.com/miniapp/logo-h.png' : 'https://resources.laihua.com/miniapp/logo-v.png';
                         this.attachUrl = '';
                         console.log(`this.attachUrl:`,this.attachUrl);
                     } else {
@@ -337,12 +347,20 @@ import {mapGetters} from 'vuex'
                     margin: 0 30rpx 0 24rpx;
                 }
             }
-            .share-img{
+            .share-img-box{
                 width: 42rpx;
                 height: 44rpx;
                 margin-right: 26rpx;
-                position: relative;
                 background-color: #151515;
+            }
+            .share-img{
+                display:inline-box;
+                background-color:#151515;
+                width: 100%;
+                height: 100%;
+                padding:0;
+                margin:0;
+                position: relative;
                 img{
                     display: inline-block;
                     width: 100%;
@@ -480,63 +498,63 @@ import {mapGetters} from 'vuex'
         justify-content: center;
         align-items: center;
         z-index: 1;
-        .bg{
-            width: 100%;
-            height: 100%;
-            background-color: #000;
-            opacity: .6;
-            position: absolute;
-            left: 0;
-            top: 0;
-        }
-        .guide-bg{
-            width: 375rpx;
-            height: 442rpx;
-            position: absolute;
-            left: 25%;
-            top: 25%;
-            // transform: translateX(-50%);
-            // transform: translateY(-50%);
-        }
-        .step-box{
-            width: 270rpx;
-            height: 169rpx;
-            background-color: #96b6ff;
-            color: #fffefe;
-            border-radius: 8px;
-            position: relative;
-            font-size: 14px;
-            padding:0rpx 39rpx 0 28rpx;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            position: absolute;
-            .step{
-                line-height: 24px;
-                position: absolute;
-                left: 22rpx;
-                top: -21rpx;
-                display: block;
-                background-color: #fff;
-                width: 43rpx;
-                height: 43rpx;
-                border-radius: 50%;
-                line-height: 43rpx;
-                text-align: center;
-                color: #96b6ff;
-            }
-            .hint{
-                line-height: 20px;
-            }
-        }
-        .step1{
-            left: 37rpx;
-            top: 75rpx;
-        }
-        .step2{
-            right: 27rpx;
-            top: 135rpx;
-        }
+        // .bg{
+        //     width: 100%;
+        //     height: 100%;
+        //     background-color: #000;
+        //     opacity: .6;
+        //     position: absolute;
+        //     left: 0;
+        //     top: 0;
+        // }
+        // .guide-bg{
+        //     width: 375rpx;
+        //     height: 442rpx;
+        //     position: absolute;
+        //     left: 25%;
+        //     top: 25%;
+        //     // transform: translateX(-50%);
+        //     // transform: translateY(-50%);
+        // }
+        // .step-box{
+        //     width: 270rpx;
+        //     height: 169rpx;
+        //     background-color: #96b6ff;
+        //     color: #fffefe;
+        //     border-radius: 8px;
+        //     position: relative;
+        //     font-size: 14px;
+        //     padding:0rpx 39rpx 0 28rpx;
+        //     display: flex;
+        //     align-items: center;
+        //     justify-content: center;
+        //     position: absolute;
+        //     .step{
+        //         line-height: 24px;
+        //         position: absolute;
+        //         left: 22rpx;
+        //         top: -21rpx;
+        //         display: block;
+        //         background-color: #fff;
+        //         width: 43rpx;
+        //         height: 43rpx;
+        //         border-radius: 50%;
+        //         line-height: 43rpx;
+        //         text-align: center;
+        //         color: #96b6ff;
+        //     }
+        //     .hint{
+        //         line-height: 20px;
+        //     }
+        // }
+        // .step1{
+        //     left: 37rpx;
+        //     top: 75rpx;
+        // }
+        // .step2{
+        //     right: 27rpx;
+        //     top: 135rpx;
+        // }
     }
 }
 // 竖版视频样式
@@ -623,12 +641,20 @@ import {mapGetters} from 'vuex'
                     transform: translate(0, 0);
                 }
             }
-            .share-img{
+            .share-img-box{
                 width: 42rpx;
                 height: 44rpx;
                 margin-right: 26rpx;
-                position: relative;
                 background-color: #151515;
+            }
+            .share-img{
+                display:inline-box;
+                background-color:#151515;
+                width: 100%;
+                height: 100%;
+                padding:0;
+                margin:0;
+                position: relative;
                 img{
                     display: inline-block;
                     width: 100%;

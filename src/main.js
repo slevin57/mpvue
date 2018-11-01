@@ -3,7 +3,6 @@ import App from './App'
 import store from './store'
 import utils from './utils'
 
-
 Vue.config.productionTip = false
 Vue.prototype.$store = store
 App.mpType = 'app'
@@ -15,7 +14,8 @@ fly.interceptors.request.use((config, promise) => {
     config.headers["X-Tag"] = "flyio";
     return config;
 })
-fly.config.baseURL = 'https://test2.laihua.com/';
+const BASE_API = process.env.NODE_ENV == 'development' ? 'https://test2.laihua.com/' : 'https://wbapi4.laihua.com/'
+fly.config.baseURL = BASE_API;
 Vue.prototype.$http = fly //将fly实例挂在vue原型上
 
 Vue.prototype.$ = utils;
