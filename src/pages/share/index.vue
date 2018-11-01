@@ -32,7 +32,10 @@
                 <image class="bg" v-if="direction==2" :src="attachUrl || 'https://resources.laihua.com/miniapp/bg-vertical.png'" mode="scaleToFill"></image>
             </div>
             <div class="ad-container">
-                <img :src="logoUrl" alt="" :class="['logo-img',direction==1 ? 'logo-h' : 'logo-v']">
+                <div class="logo-box" :class="['logo-img',direction==1 ? 'logo-h' : 'logo-v']">
+                    <!-- <img :src="logoUrl" alt="" > -->
+                    <image class="pic" :src="logoUrl" mode="widthFix" ></image>
+                </div>
                 <p v-if="slogan" class="slogan" :style="{color:sloganColor}">{{slogan}}</p>
                 <div class="options">
                     <!-- <div class="option home">
@@ -413,14 +416,23 @@ import {mapGetters} from 'vuex'
             .logo-img{
                 display: inline-block;
                 margin-bottom: 59rpx;
+                // img {
+                //     object-fit: cover;
+                // }
             }
             .logo-h{
                 width: 281rpx;
                 height: 171rpx;
+                    .pic{
+                        width: 100%;
+                    }
             }
             .logo-v{
                 width: 244rpx;
                 height: 141rpx;
+                    .pic{
+                        width:100%;
+                    }
             }
             .slogan{
                 font-size: 18px;
@@ -708,14 +720,23 @@ import {mapGetters} from 'vuex'
             .logo-img{
                 display: inline-block;
                 margin-bottom: 59rpx;
+                // img {
+                //     object-fit: cover;
+                // }
             }
             .logo-h{
                 width: 281rpx;
                 height: 171rpx;
+                    .pic{
+                        width: 100%;
+                    }
             }
             .logo-v{
                 width: 244rpx;
                 height: 141rpx;
+                    .pic{
+                        width:100%;
+                    }
             }
             .slogan{
                 font-size: 18px;
