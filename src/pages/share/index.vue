@@ -32,7 +32,7 @@
                 <image class="bg" v-if="direction==2" :src="attachUrl || 'https://resources.laihua.com/miniapp/bg-vertical.png'" mode="scaleToFill"></image>
             </div>
             <div class="ad-container">
-                <div class="logo-box" :class="['logo-img',direction==1 ? 'logo-h' : 'logo-v']">
+                <div class="logo-box" v-if="!isCustom" :class="['logo-img',direction==1 ? 'logo-h' : 'logo-v']">
                     <!-- <img :src="logoUrl" alt="" > -->
                     <image class="pic" :src="logoUrl" mode="widthFix" ></image>
                 </div>
@@ -150,9 +150,10 @@ import {mapGetters} from 'vuex'
                 //根据id长度区分普通分享与自定义分享：大于10的为自定义分享，小于10为普通分享
                 this.isCustom = this.id.length>10 ? true : false;
             } else {
+                // 默认web的普通分享视频id
                 this.source = 'scene';
-                this.id = '10699337135385';
-                this.isCustom = true;
+                this.id = '135385';
+                this.isCustom = false;
                 // wx.redirectTo({
                 //     url:'/pages/error/main'
                 // })
