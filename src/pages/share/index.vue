@@ -32,8 +32,10 @@
                 <image class="bg" v-if="direction==2" :src="attachUrl || 'https://resources.laihua.com/miniapp/bg-vertical.png'" mode="scaleToFill"></image>
             </div>
             <div class="ad-container">
-                <div class="logo-box" v-if="!isCustom" :class="['logo-img',direction==1 ? 'logo-h' : 'logo-v']">
-                    <!-- <img :src="logoUrl" alt="" > -->
+                <div class="logo-box" v-if="isCustom && watermarkUrl" :class="['logo-img',direction==1 ? 'logo-h' : 'logo-v']">
+                    <image class="pic" :src="watermarkUrl" mode="widthFix" ></image>
+                </div>
+                <div class="logo-box" v-else-if="!isCustom" :class="['logo-img',direction==1 ? 'logo-h' : 'logo-v']">
                     <image class="pic" :src="logoUrl" mode="widthFix" ></image>
                 </div>
                 <p v-if="slogan" class="slogan" :style="{color:sloganColor}">{{slogan}}</p>
@@ -61,17 +63,6 @@
         </div>
         <div class="guide" v-if="guideVisible" @click="showGuide(false)">
             <img src="https://resources.laihua.com/miniapp/guide.png" alt="" style="width:100%;height:100%;">
-            <!-- <div class="bg"></div>
-            <image class="guide-bg" src="/static/images/guide-bg.png" alt=""></image>
-            <p class="close-btn">点击返回</p>
-            <div class="step-box step1">
-                <span class="step">1</span>
-                <p class="hint">点按右上角“...”</br>关于来画视频</p>
-            </div>
-            <div class="step-box step2">
-                <span class="step">2</span>
-                <p class="hint">点击“相关公众号”</br>关注来画视频</p>
-            </div> -->
         </div>
     </div>
 </div>
@@ -95,6 +86,7 @@ import {mapGetters} from 'vuex'
                 userName: '',
                 attachUrl: '',//个性化分享广告图片
                 logoUrl:'',
+                watermarkUrl: '',//自定义的水印链接
                 slogan: '像做PPT一样做动画视频',//个性化分享slogan
                 sloganColor:'#fff',
                 imgHeight: 1,
@@ -178,15 +170,10 @@ import {mapGetters} from 'vuex'
                         let thumbnail = data.data.thumbnailUrl;
                         this.thumbnailUrl = this.$.handleAssetsUrl(screen || data.data.thumbnailUrl);
                         this.attachUrl = data.data.attachUrl ? this.$.handleAssetsUrl(data.data.attachUrl) : '';
-                        // this.direction==1 ? this.logoUrlH = data.data.watermark : this.logoUrlV = data.data.watermark;
                         if(data.data.watermark){
-                            this.logoUrl = this.$.handleAssetsUrl(data.data.watermark);
+                            this.watermarkUrl = this.$.handleAssetsUrl(data.data.watermark);
                         } else {
-                            if(this.direction==1){
-                                this.logoUrl = 'https://resources.laihua.com/miniapp/logo-h.png';
-                            } else if(this.direction==2){
-                                this.logoUrl = 'https://resources.laihua.com/miniapp/logo-v.png'
-                            }
+                            this.watermarkUrl = '';
                         }
                         let sloganObj = data.data.slogan && JSON.parse(data.data.slogan);
                         this.slogan = sloganObj && sloganObj.description && sloganObj.description;
@@ -525,63 +512,6 @@ import {mapGetters} from 'vuex'
         justify-content: center;
         align-items: center;
         z-index: 1;
-        // .bg{
-        //     width: 100%;
-        //     height: 100%;
-        //     background-color: #000;
-        //     opacity: .6;
-        //     position: absolute;
-        //     left: 0;
-        //     top: 0;
-        // }
-        // .guide-bg{
-        //     width: 375rpx;
-        //     height: 442rpx;
-        //     position: absolute;
-        //     left: 25%;
-        //     top: 25%;
-        //     // transform: translateX(-50%);
-        //     // transform: translateY(-50%);
-        // }
-        // .step-box{
-        //     width: 270rpx;
-        //     height: 169rpx;
-        //     background-color: #96b6ff;
-        //     color: #fffefe;
-        //     border-radius: 8px;
-        //     position: relative;
-        //     font-size: 14px;
-        //     padding:0rpx 39rpx 0 28rpx;
-        //     display: flex;
-        //     align-items: center;
-        //     justify-content: center;
-        //     position: absolute;
-        //     .step{
-        //         line-height: 24px;
-        //         position: absolute;
-        //         left: 22rpx;
-        //         top: -21rpx;
-        //         display: block;
-        //         background-color: #fff;
-        //         width: 43rpx;
-        //         height: 43rpx;
-        //         border-radius: 50%;
-        //         line-height: 43rpx;
-        //         text-align: center;
-        //         color: #96b6ff;
-        //     }
-        //     .hint{
-        //         line-height: 20px;
-        //     }
-        // }
-        // .step1{
-        //     left: 37rpx;
-        //     top: 75rpx;
-        // }
-        // .step2{
-        //     right: 27rpx;
-        //     top: 135rpx;
-        // }
     }
 }
 // 竖版视频样式

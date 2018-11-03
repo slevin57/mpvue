@@ -29,7 +29,7 @@
 			"list": []
 		},
 		"miniprogram": {
-			"current": 4,
+			"current": 6,
 			"list": [
 				{
 					"id": 0,
@@ -40,11 +40,10 @@
 				},
 				{
 					"id": 1,
-					"name": "web个性化分享竖版",
+					"name": "web个性化分享横版",
 					"pathName": "pages/share/main",
-					"query": "scene=0638824141394",
-					"scene": "1036",
-					"referrerInfo": {}
+					"query": "scene=1227287241399",
+					"scene": "1047"
 				},
 				{
 					"id": 2,
@@ -66,6 +65,20 @@
 					"name": "web横版自定义",
 					"pathName": "pages/share/main",
 					"query": "scene=1056875141538",
+					"scene": "1047"
+				},
+				{
+					"id": -1,
+					"name": "web个性化分享横版自定义背景和logo、slogan",
+					"pathName": "pages/share/main",
+					"query": "scene=1227502741399",
+					"scene": "1047"
+				},
+				{
+					"id": -1,
+					"name": "web个性化分享横版显示Logo但未上传",
+					"pathName": "pages/share/main",
+					"query": "scene=1227747241399",
 					"scene": "1047"
 				}
 			]
