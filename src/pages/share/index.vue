@@ -2,8 +2,9 @@
 <template>
 <div>
     <div :class="[direction==1 ? 'page-share-horizental' : 'page-share-vertical']">
-        <div class="video-wrapper" v-if="!guideVisible" :style="{height:videoHeight}">
-            <video id="miniVideo" 
+        <div class="video-wrapper" :style="{height:videoHeight}">
+            <video 
+                id="miniVideo" 
                 :src="videoUrl" 
                 :poster="thumbnailUrl"
                 :show-center-play-btn="true"
@@ -61,9 +62,9 @@
                 <!-- <a style="position:absolute;bottom:0;left:0;" href="/pages/testlist/main">test list</a> -->
             </div>
         </div>
-        <div class="guide" v-if="guideVisible" @click="showGuide(false)">
-            <img src="https://resources.laihua.com/miniapp/guide.png" alt="" style="width:100%;height:100%;">
-        </div>
+        <cover-view class="guide" v-if="guideVisible" @click="showGuide(false)">
+            <cover-image src="https://resources.laihua.com/miniapp/guide.png"  />
+        </cover-view>
     </div>
 </div>
 </template>
@@ -291,6 +292,11 @@ import {mapGetters} from 'vuex'
             },
             showGuide (val) {
                 this.guideVisible = val;
+                if (val){
+                    this.videoContxt.pause();
+                } else {
+                    this.videoContxt.play();
+                }
             }
         }
     }
@@ -760,63 +766,6 @@ import {mapGetters} from 'vuex'
         justify-content: center;
         align-items: center;
         z-index: 1;
-        .bg{
-            width: 100%;
-            height: 100%;
-            background-color: #000;
-            opacity: .6;
-            position: absolute;
-            left: 0;
-            top: 0;
-        }
-        .guide-bg{
-            width: 375rpx;
-            height: 442rpx;
-            position: absolute;
-            left: 25%;
-            top: 25%;
-            // transform: translateX(-50%);
-            // transform: translateY(-50%);
-        }
-        .step-box{
-            width: 270rpx;
-            height: 169rpx;
-            background-color: #96b6ff;
-            color: #fffefe;
-            border-radius: 8px;
-            position: relative;
-            font-size: 14px;
-            padding:0rpx 39rpx 0 28rpx;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            position: absolute;
-            .step{
-                line-height: 24px;
-                position: absolute;
-                left: 22rpx;
-                top: -21rpx;
-                display: block;
-                background-color: #fff;
-                width: 43rpx;
-                height: 43rpx;
-                border-radius: 50%;
-                line-height: 43rpx;
-                text-align: center;
-                color: #96b6ff;
-            }
-            .hint{
-                line-height: 20px;
-            }
-        }
-        .step1{
-            left: 37rpx;
-            top: 75rpx;
-        }
-        .step2{
-            right: 27rpx;
-            top: 135rpx;
-        }
     }
 }
 </style>
