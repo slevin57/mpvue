@@ -34,10 +34,10 @@
             </div>
             <div class="ad-container">
                 <div class="logo-box" v-if="isCustom && watermarkUrl" :class="['logo-img',direction==1 ? 'logo-h' : 'logo-v']">
-                    <image class="pic" :src="watermarkUrl" mode="widthFix" ></image>
+                    <image class="pic" :src="watermarkUrl" mode="aspectFit" style="width:100%;height:100%;"></image>
                 </div>
                 <div class="logo-box" v-else-if="!isCustom" :class="['logo-img',direction==1 ? 'logo-h' : 'logo-v']">
-                    <image class="pic" :src="logoUrl" mode="widthFix" ></image>
+                    <image class="pic" :src="logoUrl" mode="aspectFit" style="width:100%;height:100%;"></image>
                 </div>
                 <p v-if="slogan" class="slogan" :style="{color:sloganColor}">{{slogan}}</p>
                 <div class="options">

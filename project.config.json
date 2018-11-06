@@ -29,7 +29,7 @@
 			"list": []
 		},
 		"miniprogram": {
-			"current": 6,
+			"current": 7,
 			"list": [
 				{
 					"id": 0,
@@ -80,6 +80,12 @@
 					"pathName": "pages/share/main",
 					"query": "scene=1227747241399",
 					"scene": "1047"
+				},
+				{
+					"id": -1,
+					"name": "app竖版自定义",
+					"pathName": "pages/share/main",
+					"query": "vid=14158122143917"
 				}
 			]
 		}
