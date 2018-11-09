@@ -221,26 +221,37 @@ import {mapGetters} from 'vuex'
         },
         onHide() {
             // 页面隐藏到后台时清除缓存数据
-            wx.clearStorage();
-            this.direction = 1;
-            this.videoUrl = '';
-            this.thumbnailUrl = '';
-            this.headImgUrl = '';
-            this.userName = '';
-            this.logoUrl = '';
-            this.slogan = '';
-            this.attachUrl = '';
-            this.guideVisible = false;
+            // wx.clearStorage();
+            // this.direction = 1;
+            // this.videoUrl = '';
+            // this.thumbnailUrl = '';
+            // this.headImgUrl = '';
+            // this.userName = '';
+            // this.logoUrl = '';
+            // this.slogan = '';
+            // this.attachUrl = '';
+            // this.guideVisible = false;
         },
         onPageScroll (e) {
             this.upiconVisible = e.scrollTop > 10 ? false : true;
         },
         onShareAppMessage (e) {
+            let self = this;
+            this.videoContxt.pause();
             let imageUrl = e.target===undefined ? '' : this.thumbnailUrl ;
+
             return {
                 title: this.title,
                 path: `/pages/share/main?${this.source}=${this.id}`,
                 imageUrl,
+                success (res) {
+                    console.log(`res1:`,self);
+                    self.videoContxt.play();
+                },
+                fail (res) {
+                    console.log(`res2:`,self);
+                    self.videoContxt.play();
+                },
             }
         },
         methods:{

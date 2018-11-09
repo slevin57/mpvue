@@ -3,7 +3,6 @@ import {mapMutations} from 'vuex'
 export default {
   created () { },
   onShow (opts) {
-      console.log(`opts:`,opts);
       this.changeOptions(opts);
   },
   onHide () {
