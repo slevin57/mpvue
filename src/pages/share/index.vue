@@ -95,6 +95,7 @@ import {mapGetters} from 'vuex'
                 platform: '', // 设备操作系统
                 windowHeight:0,//屏幕可视高度
                 upiconVisible: true,
+                saveIsPlaying: false,
             }
         },
         computed : {
@@ -236,8 +237,12 @@ import {mapGetters} from 'vuex'
             this.upiconVisible = e.scrollTop > 10 ? false : true;
         },
         onShareAppMessage (e) {
+            console.log(`1111111:`,1111111);
             let self = this;
-            this.videoContxt.pause();
+            if (this.isPlaying){
+                let videoPlaying = true;
+                this.videoContxt.pause();
+            }
             let imageUrl = e.target===undefined ? '' : this.thumbnailUrl ;
 
             return {
@@ -245,12 +250,16 @@ import {mapGetters} from 'vuex'
                 path: `/pages/share/main?${this.source}=${this.id}`,
                 imageUrl,
                 success (res) {
-                    console.log(`res1:`,self);
-                    self.videoContxt.play();
+                    console.log(`saveIsPlaying1:`,videoPlaying);
+                    if (videoPlaying){
+                        self.videoContxt.play();
+                    }
                 },
                 fail (res) {
-                    console.log(`res2:`,self);
-                    self.videoContxt.play();
+                    console.log(`saveIsPlaying2:`,videoPlaying);
+                    if (videoPlaying){
+                        self.videoContxt.play();
+                    }
                 },
             }
         },
