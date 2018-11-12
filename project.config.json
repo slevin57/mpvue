@@ -29,7 +29,7 @@
 			"list": []
 		},
 		"miniprogram": {
-			"current": -1,
+			"current": 8,
 			"list": [
 				{
 					"id": 0,
@@ -86,6 +86,14 @@
 					"name": "app竖版自定义",
 					"pathName": "pages/share/main",
 					"query": "vid=14158122143917"
+				},
+				{
+					"id": -1,
+					"name": "app分享模板",
+					"pathName": "pages/share/main",
+					"query": "vid=74c1be0d-84d5-4d5d-b878-6eacaf98c7d2&type=8",
+					"scene": "1036",
+					"referrerInfo": {}
 				}
 			]
 		}

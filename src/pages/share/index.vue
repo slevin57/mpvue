@@ -76,6 +76,7 @@ import {mapGetters} from 'vuex'
             return {
                 id:'',//视频id
                 source: '',// 小程序来源，vid是app，scene是web和uwp
+                type: '', //类型，作品还是模板
                 isCustom: false,//是否为自定义分享
                 isPlaying: false,
                 videoContxt: {},
@@ -124,7 +125,6 @@ import {mapGetters} from 'vuex'
             let self = this;
             wx.getSystemInfo({
                 success (system) {
-                    console.log(`system:`,system);
                     self.platform = system.platform;
                     self.windowHeight = system.windowHeight;
                 }
@@ -136,9 +136,10 @@ import {mapGetters} from 'vuex'
             if (query.vid){//app分享出来的卡片进入
                 this.source = 'vid';
                 this.id = query.vid;
+                this.type = query.type;
                 this.isCustom = /^[0-9]*$/.test(this.id) ? true : false;
                 
-            } else if(query.scene){//扫小程序码进入
+            } else if(query.scene){//web端扫小程序码进入
                 this.source = 'scene';
                 this.id = decodeURIComponent(query.scene);
                 //根据id长度区分普通分享与自定义分享：大于10的为自定义分享，小于10为普通分享
@@ -148,14 +149,35 @@ import {mapGetters} from 'vuex'
                 this.source = 'scene';
                 this.id = '135385';
                 this.isCustom = false;
-                // wx.redirectTo({
-                //     url:'/pages/error/main'
-                // })
-                // return;
             }
             console.log(`query:`,query);
             console.log(`this.source:`,this.source);
             console.log(`this.isCustom:`,this.isCustom);
+            if (this.type && this.type==8){ //模板
+                this.$http.get(`/common/material?type=8&share=1&id=${this.id}`)
+                .then(({data}) => {
+                    console.log(`模板数据:`,data);
+                    let video = data.data[0];
+                    this.setNavigationBarTitle(video.title);
+                    this.title = video.title;
+                    this.direction = video.direction;
+                    this.videoUrl = this.$.handleAssetsUrl(video.videoUrl);
+                    let screen = video.screen && video.screen;
+                    let thumbnail = video.thumbnailUrl.split(',')[0];
+                    this.thumbnailUrl = this.$.handleAssetsUrl(screen || video.thumbnailUrl);
+                    this.headImgUrl = this.$.handleAssetsUrl(video.userInfo.headImgUrl);
+                    this.userName = video.userInfo.nickname;
+                    this.logoUrl = this.direction==1 ? 'https://resources.laihua.com/miniapp/logo-h.png' : 'https://resources.laihua.com/miniapp/logo-v.png';
+                    this.attachUrl = '';
+                    this.slogan ='像做PPT一样做动画视频';
+                    this.sloganColor = '#fff';                    
+                })
+                .catch(({data}) => {
+                    console.log(`data:`,data);
+                })
+                return;
+            }
+
             if(this.isCustom) {
                 //  自定义分享
                 this.$http.get(`/share/video?id=${this.id}`).then(({data}) => {
@@ -237,7 +259,6 @@ import {mapGetters} from 'vuex'
             this.upiconVisible = e.scrollTop > 10 ? false : true;
         },
         onShareAppMessage (e) {
-            console.log(`1111111:`,1111111);
             let self = this;
             if (this.isPlaying){
                 let videoPlaying = true;
@@ -250,13 +271,11 @@ import {mapGetters} from 'vuex'
                 path: `/pages/share/main?${this.source}=${this.id}`,
                 imageUrl,
                 success (res) {
-                    console.log(`saveIsPlaying1:`,videoPlaying);
                     if (videoPlaying){
                         self.videoContxt.play();
                     }
                 },
                 fail (res) {
-                    console.log(`saveIsPlaying2:`,videoPlaying);
                     if (videoPlaying){
                         self.videoContxt.play();
                     }
