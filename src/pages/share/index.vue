@@ -153,7 +153,7 @@ import {mapGetters} from 'vuex'
             console.log(`query:`,query);
             console.log(`this.source:`,this.source);
             console.log(`this.isCustom:`,this.isCustom);
-            if (this.type && this.type==8){ //模板
+            if (this.type && this.type == '8'){ //模板
                 this.$http.get(`/common/material?type=8&share=1&id=${this.id}`)
                 .then(({data}) => {
                     console.log(`模板数据:`,data);
