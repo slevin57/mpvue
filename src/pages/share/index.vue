@@ -153,6 +153,8 @@ import {mapGetters} from 'vuex'
             console.log(`query:`,query);
             console.log(`this.source:`,this.source);
             console.log(`this.isCustom:`,this.isCustom);
+            console.log(`this.type:`,this.type);
+            console.log(`this.type=='8':`,this.type==8);
             if (this.type && this.type == '8'){ //模板
                 this.$http.get(`/common/material?type=8&share=1&id=${this.id}`)
                 .then(({data}) => {
@@ -268,7 +270,7 @@ import {mapGetters} from 'vuex'
 
             return {
                 title: this.title,
-                path: `/pages/share/main?${this.source}=${this.id}`,
+                path: `/pages/share/main?${this.source}=${this.id}&type=${this.type}`,
                 imageUrl,
                 success (res) {
                     if (videoPlaying){
