@@ -290,7 +290,7 @@ import {mapGetters} from 'vuex'
 
             return {
                 title: this.title,
-                path: `/pages/share/main?${this.source}=${this.id}&type=${this.type}`,
+                path: path,
                 imageUrl,
                 success (res) {
                     if (videoPlaying){
