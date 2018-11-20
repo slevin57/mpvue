@@ -45,7 +45,6 @@
                         <img src="/static/images/home@2x.png" class="option-icon home-icon">
                         <span>首页</span>
                     </div> -->
-                    <!-- <button v-if="canOpenApp" class="option app" open-type="launchApp" @error="launchAppError()"> -->
                     <button v-if="canOpenApp" class="option app" open-type="launchApp" @error="launchAppError()">
                         <div class="option-icon app-icon">
                             <img src="/static/images/app@2x.png" >
@@ -71,12 +70,16 @@
 <script>
 import {mapGetters} from 'vuex'
 // 竖版视频测试地址:https://resources.laihua.com/2018-10-26/2f7761b0-d8c5-11e8-83ec-13730645ec8d.mp4
+/**
+ * app端url传参方式：url?vid=74c1be0d-84d5-4d5d-b878-6eacaf98c7d2&type=8;
+ * web端url传参方式：url?scene=8,182143(模板分享)；url?scene=141615(普通作品分享)；url?scene=26980803141615(自定义作品分享)
+ */
     export default {
         data () {
             return {
                 id:'',//视频id
                 source: '',// 小程序来源，vid是app，scene是web和uwp
-                type: '', //类型，作品还是模板
+                type: '', //类型，1作品8模板
                 isCustom: false,//是否为自定义分享
                 isPlaying: false,
                 videoContxt: {},
@@ -131,6 +134,7 @@ import {mapGetters} from 'vuex'
             })
         },
         onShow () {
+            console.log(`getCurrentPages() /:`,getCurrentPages());
             console.log(`mpvue特有的在小程序onShow周期内获取url参数方法:`,this.$root.$mp.query);
             let query = this.$root.$mp.query;
             if (query.vid){//app分享出来的卡片进入
@@ -141,9 +145,19 @@ import {mapGetters} from 'vuex'
                 
             } else if(query.scene){//web端扫小程序码进入
                 this.source = 'scene';
-                this.id = decodeURIComponent(query.scene);
-                //根据id长度区分普通分享与自定义分享：大于10的为自定义分享，小于10为普通分享
-                this.isCustom = this.id.length>10 ? true : false;
+                let scene = decodeURIComponent(query.scene);
+                // 兼容之前生成的【作品小程序码】所携带参数，没有,分隔
+                if (scene.indexOf(',') == -1){
+                    this.type = 1;
+                    this.id = scene;
+                } else {
+                    this.type = scene.split(',')[0];
+                    this.id = scene.split(',')[1];
+                }
+
+                //当为作品时，根据id长度区分作品的普通分享与自定义分享：大于10的为自定义分享，小于10为普通分享
+                this.isCustom = this.type==1 && this.id.length >10 ? true : false;
+
             } else {
                 // 默认web的普通分享视频id
                 this.source = 'scene';
@@ -153,8 +167,8 @@ import {mapGetters} from 'vuex'
             console.log(`query:`,query);
             console.log(`this.source:`,this.source);
             console.log(`this.isCustom:`,this.isCustom);
-            console.log(`this.type:`,this.type);
-            console.log(`this.type=='8':`,this.type==8);
+
+            // 模板分享
             if (this.type && this.type == '8'){ //模板
                 this.$http.get(`/common/material?type=8&share=1&id=${this.id}`)
                 .then(({data}) => {
@@ -180,8 +194,9 @@ import {mapGetters} from 'vuex'
                 return;
             }
 
+
+            // 自定义作品分享
             if(this.isCustom) {
-                //  自定义分享
                 this.$http.get(`/share/video?id=${this.id}`).then(({data}) => {
                     console.log(`自定义分享data:`,data);
                     if (data.code==200 && data.data){
@@ -214,7 +229,7 @@ import {mapGetters} from 'vuex'
                         })
                     }
                 })
-             } else {
+            } else {
                 // 普通分享
                 this.$http.get(`/common/material?type=1&share=1&id=${this.id}`).then(({data}) => {
                     console.log(`普通分享data:`,data);
@@ -261,12 +276,17 @@ import {mapGetters} from 'vuex'
             this.upiconVisible = e.scrollTop > 10 ? false : true;
         },
         onShareAppMessage (e) {
-            let self = this;
+            let self = this,
+                path='';
             if (this.isPlaying){
                 let videoPlaying = true;
                 this.videoContxt.pause();
             }
             let imageUrl = e.target===undefined ? '' : this.thumbnailUrl ;
+            
+            path = this.source === 'scene' 
+                    ? `/pages/share/main?${this.source}=${this.type},${this.id}` 
+                    : `/pages/share/main?${this.source}=${this.id}&type=${this.type}`  ;
 
             return {
                 title: this.title,

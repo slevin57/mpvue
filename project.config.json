@@ -29,7 +29,7 @@
 			"list": []
 		},
 		"miniprogram": {
-			"current": 8,
+			"current": 9,
 			"list": [
 				{
 					"id": 0,
@@ -94,6 +94,13 @@
 					"query": "vid=74c1be0d-84d5-4d5d-b878-6eacaf98c7d2&type=8",
 					"scene": "1036",
 					"referrerInfo": {}
+				},
+				{
+					"id": -1,
+					"name": "web模板分享",
+					"pathName": "pages/share/main",
+					"query": "scene=8,2c91765",
+					"scene": "1047"
 				}
 			]
 		}
