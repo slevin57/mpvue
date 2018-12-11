@@ -1,16 +1,20 @@
 <script>
 import {mapMutations} from 'vuex'
 export default {
-  created () { },
-  onShow (opts) {
-      this.changeOptions(opts);
-  },
-  onHide () {
-    //   console.log(`22222:`,22222);
-  },
-  methods:{
-      ...mapMutations(['changeOptions'])
-  }
+    created () {
+    },
+    onLaunch () {
+    },
+    mounted () {
+    },
+    onShow (opts) {
+        this.changeOptions(opts);
+    },
+    onHide () {
+    },
+    methods:{
+        ...mapMutations(['changeOptions'])
+    }
 }
 </script>
 

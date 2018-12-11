@@ -6,6 +6,7 @@
             <video 
                 id="miniVideo" 
                 :src="videoUrl" 
+                :custom-cache="false"
                 :poster="thumbnailUrl"
                 :show-center-play-btn="true"
                 @pause="videoPauseHdl()"
@@ -58,7 +59,7 @@
                         <span class="name">公众号</span>
                     </div>
                 </div>
-                <!-- <a style="position:absolute;bottom:0;left:0;" href="/pages/testlist/main">test list</a> -->
+                <a style="position:absolute;bottom:0;left:0;" href="/pages/testlist/main">test list</a>
             </div>
         </div>
         <cover-view class="guide" v-if="guideVisible" @click="showGuide(false)">
@@ -69,7 +70,6 @@
 </template>
 <script>
 import {mapGetters} from 'vuex'
-// 竖版视频测试地址:https://resources.laihua.com/2018-10-26/2f7761b0-d8c5-11e8-83ec-13730645ec8d.mp4
 /**
  * app端url传参方式：url?vid=74c1be0d-84d5-4d5d-b878-6eacaf98c7d2&type=8;
  * web端url传参方式：url?scene=8,182143(模板分享)；url?scene=141615(普通作品分享)；url?scene=26980803141615(自定义作品分享)
@@ -120,9 +120,7 @@ import {mapGetters} from 'vuex'
                 return this.direction==2 ? `${this.windowHeight*.1}px` : ''
             }
         },
-        mounted () {
-            this.videoContxt = wx.createVideoContext('miniVideo');
-        },
+        created () { },
         onLoad (query) {
             this.setNavigationBarColor();
             let self = this;
@@ -134,8 +132,7 @@ import {mapGetters} from 'vuex'
             })
         },
         onShow () {
-            console.log(`getCurrentPages() /:`,getCurrentPages());
-            console.log(`mpvue特有的在小程序onShow周期内获取url参数方法:`,this.$root.$mp.query);
+            this.videoContxt = wx.createVideoContext('miniVideo');
             let query = this.$root.$mp.query;
             if (query.vid){//app分享出来的卡片进入
                 this.source = 'vid';
@@ -164,9 +161,6 @@ import {mapGetters} from 'vuex'
                 this.id = '135385';
                 this.isCustom = false;
             }
-            console.log(`query:`,query);
-            console.log(`this.source:`,this.source);
-            console.log(`this.isCustom:`,this.isCustom);
 
             // 模板分享
             if (this.type && this.type == '8'){ //模板
@@ -200,7 +194,6 @@ import {mapGetters} from 'vuex'
                 this.$http.get(`/share/video?id=${this.id}`).then(({data}) => {
                     console.log(`自定义分享data:`,data);
                     if (data.code==200 && data.data){
-
                         this.setNavigationBarTitle(data.data.title);
                         this.direction = data.data.direction;
                         this.title = data.data.title;
@@ -248,7 +241,6 @@ import {mapGetters} from 'vuex'
                         this.attachUrl = '';
                         this.slogan ='像做PPT一样做动画视频';
                         this.sloganColor = '#fff';
-                        console.log(`this.attachUrl:`,this.attachUrl);
                     } else {
                         wx.showToast({
                             icon:'none',
@@ -259,6 +251,8 @@ import {mapGetters} from 'vuex'
                 })
              }
         },
+        onReady () { },
+        mounted () { },
         onHide() {
             // 页面隐藏到后台时清除缓存数据
             // wx.clearStorage();
@@ -272,6 +266,10 @@ import {mapGetters} from 'vuex'
             // this.attachUrl = '';
             // this.guideVisible = false;
         },
+        onUnload () {
+            console.log('page onUnload:');
+        },
+        beforeDestroy() { },
         onPageScroll (e) {
             this.upiconVisible = e.scrollTop > 10 ? false : true;
         },
