@@ -59,7 +59,7 @@
                         <span class="name">公众号</span>
                     </div>
                 </div>
-                <a style="position:absolute;bottom:0;left:0;" href="/pages/testlist/main">test list</a>
+                <!-- <a style="position:absolute;bottom:0;left:0;" href="/pages/testlist/main">test list</a> -->
             </div>
         </div>
         <cover-view class="guide" v-if="guideVisible" @click="showGuide(false)">
