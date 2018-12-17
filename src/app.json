@@ -1,8 +1,14 @@
 {
-  "pages": [
-    "pages/share/main",
+    "pages": [
+    "pages/applyinfo/main",
+    "pages/investman/main",
+    "pages/salesman/main",
+    "pages/client/main",
+    "pages/apply/main",
+    "pages/index/main",
     "pages/error/main",
-    "pages/testlist/main"
+    "pages/testlist/main",
+    "pages/about/main"
   ],
   "window": {
     "backgroundTextStyle": "light",

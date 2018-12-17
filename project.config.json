@@ -2,15 +2,16 @@
 	"description": "项目配置文件。",
 	"setting": {
 		"urlCheck": true,
-		"es6": false,
+		"es6": true,
 		"postcss": true,
 		"minified": true,
-		"newFeature": true
+		"newFeature": true,
+		"autoAudits": false
 	},
 	"miniprogramRoot": "dist/",
 	"compileType": "miniprogram",
-	"appid": "wx8526abc14fb3167c",
-	"projectname": "laihua-mnp",
+	"appid": "wxde95d6f172b45ad6",
+	"projectname": "1215",
 	"condition": {
 		"search": {
 			"current": -1,
