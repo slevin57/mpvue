@@ -5,26 +5,26 @@
         <form action="">
             <div class="row">
                 <p class="title name">姓名：</p>
-                <input class='input' type="text">
+                <input class='input' type="text" v-model="name">
             </div>
             <div class="row">
                 <p class="title name">手机号：</p>
-                <input class='input' type="text">
+                <input class='input' type="text" v-model="tel">
             </div>
             <div class="row">
                 <p class="title name">身份证号：</p>
-                <input class='input' type="text">
+                <input class='input' type="text" v-model="idcard">
             </div>
             <div class="row">
                 <p class="title name">借款金额：</p>
-                <input class='input' type="text">
+                <input class='input' type="text" v-model="apply_amount">
             </div>
             <div class="row">
                 <p class="title name">备注：</p>
-                <input class='input' type="text">
+                <input class='input' type="text" v-model="client_remark">
             </div>
         </form>
-        <button class="btn">提交</button>
+        <button class="btn" @click="submit()">提交</button>
     </div>
     <div v-if="!apply" class="footer">
         广东双赢信息科技有限公司
@@ -32,7 +32,7 @@
     <div v-else class="applied">
         <div class="row">您的申请已提交</div>
         <div class="row">请等待业务员联系您</div>
-        <button class="row btn">返回</button>
+        <navigator open-type="redirect" url="/pages/index/main" class="row btn" >返回</navigator >
     </div>
 </div>
 </template>
@@ -40,22 +40,39 @@
 export default {
     data () {
         return {
-            apply: true,
+            apply: false,
+            name:'',
+            client_id: 2,
+            tel:'',
+            idcard:'',
+            apply_amount:'',
+            client_remark:'',
         }
     },
     mounted () {
-        this.$http.post('/api/apply_order',{
-            client_id:343,
-            name:'jack',
-            tel: 34434,
-            idcard: 3434,
-            apply_amount: 3434,
-        }).then((({data}) => {
-            console.log(`data:`,data);
-        }))
+        this.apply = false;
     },
     methods:{
-        
+        submit() {
+            this.$http.post('/api/apply_order',{
+                client_id: this.client_id,
+                name:this.name,
+                tel:this.tel,
+                idcard:this.idcard,
+                apply_amount:this.apply_amount,
+                client_remark: this.client_remark,
+            }).then((res => {
+                if (res.data == 200) {
+                    this.apply = true;
+                } else {
+                    wx.showToast({
+                        title: '请求失败',
+                        icon: 'none',
+                        duration: 2000
+                    })
+                }
+            }))
+        }
     }
 }
 </script>

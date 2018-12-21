@@ -1,0 +1,86 @@
+页面：“1-1用户申请页”
+地址：https://www.shuangwin.com/api/apply_order
+方式：post
+参数：client_id：借款人ID，name：名字，tel：电话，idcard：身份证号，apply_amount：借款金额，client_remark：备注
+
+页面：“1-3个人中心”
+地址：https://www.shuangwin.com/api/client_repayments/{client_id}
+方式：get
+参数：client_id：借款人ID
+返回：json数组；status：还款状态（0:没还,1:已还），repay_date：还款时间，repay_num：还款金额，repayed_date：实际还款时间，repayed_date：实际还款金额
+[{"id":2,"order_id":2,"status":1,"repay_date":"2018-12-13","repay_num":"1888","repayed_date":"2018-12-18","repayed_num":"1888"},{"id":1,"order_id":2,"status":0,"repay_date":"2018-12-14","repay_num":"2000","repayed_date":null,"repayed_num":null}]
+
+页面：“2-1个人中心”
+地址：https://www.shuangwin.com/api/agent_orders/{agent_id}
+方式：get
+参数：agent_id：借款人ID
+返回：json数组；client_id: 借款人ID, status：状态（1:提交中,其它:已通过）, updated_at：提交日期
+[{"id":2,"client_id":4,"status":3,"updated_at":"2018-12-14 11:04:42"},{"id":3,"client_id":5,"status":1,"updated_at":"2018-12-14 10:39:38"},{"id":15,"client_id":6,"status":2,"updated_at":"2018-12-14 10:44:22"}]
+
+页面：“3资方主页->申请汇总”
+地址：https://www.shuangwin.com/api/approved_orders
+方式：get
+参数：无
+返回：json数组; name:借款人, prepare_amount:借款金额; status:状态（2:匹配中,3:已批款）,created_at: 申请日期
+[{"id":15,"name":"Jamar Streich","prepare_amount":"6469","status":2,"created_at":"2018-10-22 09:05:26"},{"id":2,"name":"Roberta Wunsch","prepare_amount":"1359","status":3,"created_at":"2018-10-22 09:05:25"},{"id":4,"name":"Roel Reinger","prepare_amount":"4293","status":3,"created_at":"2018-10-22 09:05:25"}]
+
+页面：“3-1个人中心”
+地址：https://www.shuangwin.com/api/capital_orders/{capital_id}
+方式：get
+参数：capital_id:资金方ID
+返回：json数组; name:借款人, approve_amount:借款金额; repay_status:状态（0:还款中,1:已收回）
+[{"id":2,"name":"Roberta Wunsch","approve_amount":"1359","repay_status":0},{"id":4,"name":"Roel Reinger","approve_amount":"4293","repay_status":0}]
+
+页面：“3-2资料查看展示”
+地址：https://www.shuangwin.com/api/order_detail/{id}
+方式：get
+参数：id
+返回：json数组; 
+client_id:借贷人ID
+agent_id:业务员ID
+capital_id:资金方ID
+agent_name:业务员名字
+agent_tel:业务员电话
+capital_name:资金方名字
+capital_tel:资金方电话
+apply_amount:申请金额（借贷者）
+prepare_amount:准备贷款金额（业务员）
+approve_amount:实批金额（管理员）
+repay_status:还款状态（0:还款中,1:已还）
+status:该申请的处理状态（0:新订单，1:审核中， 2:寻款中，3:已批款,4:不置理）
+service_type:业务类型
+charge:收费
+returnfee:返费
+assess_source:评估来源
+assess_unit_price:评估单价
+assess_gross_amount:评估总额
+name:姓名
+age:年龄
+gender:姓别（0：未知、1：男、2：女）
+idcard:身份证号
+tel:联系电话
+client_remark:客户备注信息
+marital_status:婚姻状况（未婚0、已婚1、离异2）
+coborrower_relation:共借人关系
+coborrower_name:共借人姓名
+coborrower_gender:共借人姓别（0：未知、1：男、2：女）
+coborrower_idcard:共借人身份证号
+coborrower_tel:共借人联系电话
+credit_record:信用记录是否空白（0：空白，1：非空白）
+credit_record_status:信用记录是否包含止付，冻结，杂帐（0：不包含，1包含）
+overdue:当前是否逾期（0：没逾期，1：逾期）
+house_type:房产类型
+house_owner:产权人
+owner_type:单独或共同拥有（0：未知，1单独拥有，2共同拥有）
+house_address:房产地址
+house_owner_certificate:权属证明
+/////////////////////////////////////////////
+order_id:订单信息表ID
+url:附件存储地址
+file_type:附件类型(0:身份证图片,1:户口本图片,2:婚姻证明图片,3:征信记录图片,4:房产证图片,5:营业执照或工作证明,6:流水私发,7:评估截图,)
+file_desc:附件描述信息
+
+[
+	{"id":15,"client_id":6,"agent_id":2,"capital_id":null,"agent_name":"Dario Simonis","agent_tel":"482-638-0074","capital_name":null,"capital_tel":null,"apply_amount":"6469","prepare_amount":"6469","approve_amount":null,"repay_status":0,"status":2,"service_type":"service type ratccec","charge":"579","returnfee":"424","assess_source":"assess source ogomcly","assess_unit_price":"assess unit price","assess_gross_amount":"assess gross amount","name":"Jamar Streich","age":26,"gender":"\u7537","idcard":"5490267856801148","tel":null,"client_remark":null,"marital_status":"\u672a\u5a5a","coborrower_relation":"coborrower relation xltpawn","coborrower_name":"Miss Annette Littel IV","coborrower_gender":"\u7537","coborrower_idcard":"4485296673393344","coborrower_tel":"525.276.0970 x398","credit_record":"\u7a7a\u767d","credit_record_status":"\u5305\u542b","overdue":"\u6ca1\u903e\u671f","house_type":"house type ogkhubk","house_owner":"Iliana Howe","owner_type":"\u5171\u540c\u62e5\u6709","house_address":"252 Friesen Estates\nDemondhaven, MI 21676","house_owner_certificate":"house owner certificate ogkhubk","deleted_at":null,"created_at":"2018-10-22 09:05:26","updated_at":"2018-12-14 10:44:22"},
+	[{"id":38,"order_id":15,"url":"https:\/\/lorempixel.com\/640\/480\/?99012","file_type":4,"file_desc":"\u623f\u4ea7\u8bc1","deleted_at":null,"created_at":"2018-10-22 09:50:26","updated_at":"2018-10-22 09:50:26"},{"id":36,"order_id":15,"url":"https:\/\/lorempixel.com\/640\/480\/?56148","file_type":5,"file_desc":"\u8425\u4e1a\u6267\u7167\u6216\u5de5\u4f5c\u8bc1\u660e","deleted_at":null,"created_at":"2018-10-22 09:50:26","updated_at":"2018-10-22 09:50:26"}]
+]

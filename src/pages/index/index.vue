@@ -15,10 +15,9 @@
             </block>
         </swiper>
     </section>
-    <button open-type="getUserInfo" bindgetuserinfo="getUserInfo">开始使用</button>
     <section class="sec sec2">
-        <navigator url="/pages/about/main" class="btn" >房抵申请</navigator >
         <navigator url="/pages/apply/main" class="btn" >房抵申请</navigator >
+        <navigator url="/pages/about/main" class="btn" >关于双赢</navigator >
         <p class="comp-name">广东双盈科技信息有限公司</p>
     </section>
 </div>
@@ -42,33 +41,13 @@ export default {
         }
     },
     onLoad (){
-        wx.login({
-            success : function (a) {
-                console.log(`a:`,a);
-            }
-        })
-        wx.getSetting({
-            success (res){
-                console.log(`res.authSetting:`,res.authSetting);
-            }
-        })
-        wx.getUserInfo({
-            success(res) {
-                console.log(`res:`,res);
-                const userInfo = res.userInfo
-                const nickName = userInfo.nickName
-                const avatarUrl = userInfo.avatarUrl
-                const gender = userInfo.gender // 性别 0：未知、1：男、2：女
-                const province = userInfo.province
-                const city = userInfo.city
-                const country = userInfo.country
-            }
-        })
+
+    },
+    mounted (){
+       
     },
     methods:{
-        getUserInfo: function(e) {
-            console.log(`e:`,e);
-         }
+        
     }
 }
 </script>

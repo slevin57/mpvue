@@ -6,16 +6,18 @@
         </div>
         <div class="invest-box">
             <ul class="invests">
-                <li class="invest">
+                <li class="invest" v-for="(item,index) in approvedData" :key="index">
                     <div class="left">
-                        <p class="number">订单编号：dfdf</p>
-                        <p class="sum">借款人：sdfsd</p>
-                        <p class="date">借款金额：fdf</p>
-                        <p class="date">申请日期：fdf</p>
+                        <p class="number">订单编号：{{item.id}}</p>
+                        <p class="sum">借款人：{{item.name}}</p>
+                        <p class="date">借款金额：{{item.prepare_amount}}</p>
+                        <p class="date">申请日期：{{item.created_at}}</p>
                     </div>
                     <div class="right back">
                         <span class="status">匹配中</span>
-                        <span class="check">查看</span>
+                        <!-- <navigator class="check" :url="`/page/formShow/main?id=`+item.id">查看</navigator > -->
+                        <!-- <a class="check" :href="`/page/formShow/main?id=${item.id}`">查看</a > -->
+                        <span @click="navigateTo(item.id)" class="check">查看</span>
                     </div>
                 </li>
             </ul>
@@ -31,11 +33,25 @@
         data () {
             return {
                 currentTab: 1,
+                approvedData:[],
             }
+        },
+        mounted () {
+            this.fetchApprovedData();
         },
         methods :{
             toggleTab (tab) {
                 this.currentTab = tab;
+            },
+            fetchApprovedData () {
+                this.$http.get('/api/approved_orders').then( res => {
+                    this.approvedData = res.data;
+                })
+            },
+            navigateTo (id) {
+                wx.navigateTo({
+                    url: `/pages/formshow/main?id=${id}`,
+                })
             }
         }
     }

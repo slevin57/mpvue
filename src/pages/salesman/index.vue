@@ -6,38 +6,35 @@
         </div>
         <div class="userinfo">
             <div class="left">
-                <img class="avanta" src="" alt="">
+                <img class="avanta" :src="userInfo.avatarUrl" alt="">
             </div>
             <div class="right">
-                <p class="name">昵称：张晓阳</p>
+                <p class="name">昵称：{{userInfo.nickName}}</p>
                 <p class="identify">用户身份：借款人</p>
             </div>
         </div>
         <div class="userplan">
             <div class="title-box">
-                <span class="title">还款计划</span>
+                <span class="title">历史提交</span>
                 <span class="detail">
-                    总计借款20w，共计6期还清
+                    总计提交10，待提交2
                 </span>
             </div>
             <div class="table">
                 <div class="tr">
-                    <div class="th"> 总期数 </div>
-                    <div class="th"> 时间 </div>
-                    <div class="th"> 金额 </div>
-                    <div class="th"> 还款状态 </div>
+                    <div class="th"> 编号 </div>
+                    <div class="th"> 提交日期 </div>
+                    <div class="th"> 状态 </div>
+                    <div class="th"> 操作 </div>
                 </div>
-                <div class="tr">
-                    <div class="td">第一期</div>
-                    <div class="td">2018.09.12</div>
-                    <div class="td">12300</div>
-                    <div class="td payed">已还</div>
-                </div>
-                <div class="tr">
-                    <div class="td">第一期</div>
-                    <div class="td">2018.09.12</div>
-                    <div class="td">12300</div>
-                    <div class="td unpayed">未还</div>
+                <div class="tr" v-for="(item,index) in dataList" :key="index">
+                    <div class="td">{{index+1}}</div>
+                    <div class="td">{{item.updated_at}}</div>
+                    <div class="td" v-if="item.status==1">提交中</div>
+                    <div class="td" v-if="item.status==2">其他</div>
+                    <div class="td" v-if="item.status==3">已通过</div>
+                    <div class="td payed" v-if="item.status==1">可修改</div>
+                    <div class="td unpayed" v-else>不可修改</div>
                 </div>
             </div>
         </div>
@@ -48,15 +45,35 @@
 </template>
 
 <script>
+import { mapGetters } from 'vuex'
     export default {
         data () {
             return {
                 currentTab: 1,
+                clientId: 3,
+                dataList:[],
             }
+        },
+        computed : {
+            ...mapGetters(["userInfo"])
+        },
+        watch : {
+            userInfo () {
+                this.clientId = this.userInfo.client_id;
+                this.fetchData();
+            }
+        },
+        mounted () {
+
         },
         methods :{
             toggleTab (tab) {
                 this.currentTab = tab;
+            },
+            fetchData () {
+                this.$http.get(`/api/agent_orders/${this.clientId}`).then(res => {
+                    this.dataList = res.data;
+                })
             }
         }
     }

@@ -2,7 +2,7 @@
     <div class="page-client">
         <div class="userinfo">
             <div class="left">
-                <img class="avanta" src="" alt="">
+                <img class="avanta" :src="userInfo.avatarUrl" alt="">
             </div>
             <div class="right">
                 <p class="name">昵称：张晓阳</p>
@@ -23,17 +23,12 @@
                     <div class="th"> 金额 </div>
                     <div class="th"> 还款状态 </div>
                 </div>
-                <div class="tr">
-                    <div class="td">第一期</div>
-                    <div class="td">2018.09.12</div>
-                    <div class="td">12300</div>
-                    <div class="td payed">已还</div>
-                </div>
-                <div class="tr">
-                    <div class="td">第一期</div>
-                    <div class="td">2018.09.12</div>
-                    <div class="td">12300</div>
-                    <div class="td unpayed">未还</div>
+                <div class="tr" v-for="(item,index) in list" :key="index">
+                    <div class="td">第{{item.index+1}}期</div>
+                    <div class="td">{{item.repay_date}}</div>
+                    <div class="td">{{item.repay_num}}</div>
+                    <div v-if="item.status" class="td payed">已还</div>
+                    <div v-else class="td unpayed">未还</div>
                 </div>
             </div>
         </div>
@@ -44,10 +39,25 @@
 </template>
 
 <script>
+import { mapGetters } from 'vuex'
     export default {
         data () {
             return {
-
+                clientId: 2,
+                list: [],
+            }
+        },
+        computed : {
+            ...mapGetters(["userInfo"])
+        },
+        mounted () {
+            this.fetchData();
+        },
+        methods :{
+            fetchData () {
+                this.$http.get(`/api/client_repayments/${this.clientId}`).then(({data}) => {
+                    this.list = data;
+                })
             }
         }
     }

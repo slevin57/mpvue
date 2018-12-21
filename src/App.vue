@@ -4,16 +4,40 @@ export default {
     created () {
     },
     onLaunch () {
+        let self = this;
+        wx.getUserInfo({
+            success(res) {
+                let { encryptedData,userInfo,iv } = res;
+
+                wx.login({
+                    success(res) {
+                        if (res.code) {
+                            self.$http.post('/api/getWxUserInfo',{
+                                code: res.code,
+                                encryptedData,
+                                iv,
+                            }).then(res => {
+                                userInfo.client_id = res.data.openId;
+                                self.changeStatus(userInfo);
+                            })
+                        } else {
+                            console.log('登录失败！' + res.errMsg)
+                        }
+                    }
+                })
+            }
+        }) 
+
     },
     mounted () {
+
     },
     onShow (opts) {
-        this.changeOptions(opts);
     },
     onHide () {
     },
     methods:{
-        ...mapMutations(['changeOptions'])
+        ...mapMutations(['changeStatus']),
     }
 }
 </script>

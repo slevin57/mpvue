@@ -6,10 +6,10 @@
         </div>
         <div class="userinfo">
             <div class="left">
-                <img class="avanta" src="" alt="">
+                <img class="avanta" :src="userInfo.avatarUrl" alt="">
             </div>
             <div class="right">
-                <p class="name">昵称：张晓阳</p>
+                <p class="name">昵称：{{userInfo.nickName}}</p>
                 <p class="identify">用户身份：投资方</p>
             </div>
             <div class="sum">
@@ -18,13 +18,16 @@
         </div>
         <div class="invest-box">
             <ul class="invests">
-                <li class="invest">
+                <li class="invest" v-for="(item,index) in dataList" :key="index">
                     <div class="left">
-                        <p class="number">借款编号：dfdf</p>
-                        <p class="sum">借款金额：sdfsd</p>
+                        <p class="number">借款编号：{{item.id}}</p>
+                        <p class="sum">借款金额：{{item.approve_amount}}</p>
                         <p class="date">还款日期：fdf</p>
                     </div>
-                    <div class="right back">
+                    <div class="right unback" v-if="item.repay_status==0">
+                        <span class="status">还款中</span>
+                    </div>
+                    <div class="right back" v-if="item.repay_status==1">
                         <span class="status">已收回</span>
                     </div>
                 </li>
@@ -37,15 +40,33 @@
 </template>
 
 <script>
+import { mapGetters } from 'vuex'
     export default {
         data () {
             return {
                 currentTab: 1,
+                clientId: 3,
+                dataList:[],
+            }
+        },
+        computed : {
+            ...mapGetters(["userInfo"])
+        },
+        watch : {
+            userInfo () {
+                this.clientId = this.userInfo.client_id;
+                this.fetchData();
             }
         },
         methods :{
             toggleTab (tab) {
                 this.currentTab = tab;
+            },
+            fetchData () {
+                this.$http.get(`/api/capital_orders/${this.clientId}`).then(res => {
+                    this.dataList = res.data;
+                    console.log(`this.dataList:`,this.dataList);
+                })
             }
         }
     }
@@ -73,7 +94,6 @@
             }
             .btn-active {
                 background-color: #4aa143;
-
             }
         }
         .userinfo{
@@ -127,7 +147,6 @@
             }
         }
         .invest-box{
-            border: 1px solid red;
             max-height: 800rpx;
             overflow: scroll;
             padding: 40rpx 30rpx 0;
@@ -150,6 +169,9 @@
                         display: flex;
                         align-items: center;
                         justify-content: center;
+                    }
+                    .unback{
+                        background-color: red;
                     }
                     .back {
                         background-color: green;

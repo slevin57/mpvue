@@ -1,14 +1,15 @@
 {
     "pages": [
-    "pages/applyinfo/main",
-    "pages/investman/main",
-    "pages/salesman/main",
-    "pages/client/main",
-    "pages/apply/main",
-    "pages/index/main",
-    "pages/error/main",
-    "pages/testlist/main",
-    "pages/about/main"
+        "pages/index/main",
+        "pages/formshow/main",
+        "pages/applyinfo/main",
+        "pages/investman/main",
+        "pages/salesman/main",
+        "pages/client/main",
+        "pages/apply/main",
+        "pages/formupload/main",
+        "pages/error/main",
+        "pages/about/main"
   ],
   "window": {
     "backgroundTextStyle": "light",
