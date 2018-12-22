@@ -5,16 +5,22 @@
                 <img class="avanta" :src="userInfo.avatarUrl" alt="">
             </div>
             <div class="right">
-                <p class="name">昵称：张晓阳</p>
+                <p class="name">昵称：{{userInfo.nickName}}</p>
                 <p class="identify">用户身份：借款人</p>
             </div>
+        </div>
+        <div class="phone-box">
+            <div class="phone-num">
+                手机号：<input v-model="phone" type="number">
+            </div>
+            <div class="btn" @click="changePhone()"> 修改 </div>
         </div>
         <div class="userplan">
             <div class="title-box">
                 <span class="title">还款计划</span>
-                <span class="detail">
+                <!-- <span class="detail">
                     总计借款20w，共计6期还清
-                </span>
+                </span> -->
             </div>
             <div class="table">
                 <div class="tr">
@@ -45,6 +51,7 @@ import { mapGetters } from 'vuex'
             return {
                 clientId: 2,
                 list: [],
+                phone: 110,
             }
         },
         computed : {
@@ -57,6 +64,14 @@ import { mapGetters } from 'vuex'
             fetchData () {
                 this.$http.get(`/api/client_repayments/${this.clientId}`).then(({data}) => {
                     this.list = data;
+                })
+            },
+            changePhone () {
+                console.log(`this.phone:`,this.phone);
+                wx.showToast({
+                    title:'修改成功',
+                    icon: 'none',
+                    duration: 1000,
                 })
             }
         }
@@ -76,7 +91,6 @@ import { mapGetters } from 'vuex'
             display: flex;
             align-items: center;
             justify-content: flex-start;
-            border: 1px solid red;
             border-top: 2px solid #e3e3e3;
             border-bottom: 2px solid #e3e3e3;
             box-sizing: border-box;
@@ -85,7 +99,6 @@ import { mapGetters } from 'vuex'
                 height: 110rpx;
                 margin-left: 20rpx;
                 margin-right: 40rpx;
-                border: 1px solid red;
                 .avanta{
                     display: inline-block;
                     width: 100%;
@@ -106,6 +119,22 @@ import { mapGetters } from 'vuex'
                 .name{
                     border-bottom: 1px solid #e3e3e3;
                 }
+            }
+        }
+        .phone-box{
+            padding: 20rpx;
+            display: flex;
+            justify-content: space-between;
+            .phone-num{
+                display: flex;
+                align-items: center;
+            }
+            .btn{
+                background-color: #4aa143;
+                color: #fff;
+                padding: 5rpx 15rpx;
+                border-radius: 5px;
+                cursor: pointer;
             }
         }
         .userplan{

@@ -90,7 +90,7 @@
         <section class="sec sec-pics ">
             <h4 class="title title-basic"> 附件资料 </h4>
             <div class="row">
-                <div class="item" v-for="item in test">
+                <div class="item" v-for="(item,index) in fileList" :key="index">
                     <p class="item-name" v-if="item.file_type=='0'">身份证正反面</p>
                     <p class="item-name" v-if="item.file_type=='1'">户口本</p>
                     <p class="item-name" v-if="item.file_type=='2'">婚姻证明</p>
@@ -101,73 +101,12 @@
                     <p class="item-name" v-if="item.file_type=='7'">评估截图</p>
                     <p class="item-name" v-if="item.file_type=='8'">其他补充资料</p>
                     <div class="pics">
-                        <!-- <div class="pic pic-left"><img :src="item.url"></img></div> -->
-                        <!-- <div class="pic"><img :src="item.url"></img></div> -->
+                        <div class="pic pic-left" @click="preview(item.url)"><img :src="item.url"></img></div>
+                        <div class="pic" v-if="item.url2" @click="preview(item.url2)"><img :src="item.url2"></img></div>
                     </div>
                 </div>
-                <!-- <div class="item">
-                    <p class="item-name">户口本</p>
-                    <div class="pics">
-                        <div class="pic pic-left"><img :src="files[1].url"></img></div>
-                        <div class="pic"><img :src="files[1].url"></img></div>
-                    </div>
-                </div>
-                <div class="item">
-                    <p class="item-name">婚姻证明</p>
-                    <div class="pics">
-                        <div class="pic pic-left"><img :src="files[2].url"></img></div>
-                        <div class="pic"><img :src="files[2].url"></img></div>
-                    </div>
-                </div>
-            </div>
-            <div class="row">
-                <div class="item">
-                    <p class="item-name">征信记录</p>
-                    <div class="pics">
-                        <div class="pic pic-left"><img :src="files[3].url"></img></div>
-                        <div class="pic"><img :src="files[3].url"></img></div>
-                    </div>
-                </div>
-                <div class="item">
-                    <p class="item-name">房产证</p>
-                    <div class="pics">
-                        <div class="pic pic-left"><img :src="files[4].url"></img></div>
-                        <div class="pic"><img :src="files[4].url"></img></div>
-                    </div>
-                </div>
-                <div class="item">
-                    <p class="item-name">执照或工作证明</p>
-                    <div class="pics">
-                        <div class="pic pic-left"><img :src="files[5].url"></img></div>
-                        <div class="pic"><img :src="files[5].url"></img></div>
-                    </div>
-                </div>
-            </div>
-            <div class="row">
-                <div class="item">
-                    <p class="item-name">银行流水</p>
-                    <div class="pics">
-                        <div class="pic pic-left"><img :src="files[6].url"></img></div>
-                        <div class="pic"><img :src="files[6].url"></div>
-                    </div>
-                </div>
-                <div class="item">
-                    <p class="item-name">评估截图</p>
-                    <div class="pics">
-                        <div class="pic pic-left"><img :src="files[7].url"></div>
-                        <div class="pic"><img :src="files[7].url"></div>
-                    </div>
-                </div>
-                <div class="item">
-                    <p class="item-name">其他补充资料</p>
-                    <div class="pics">
-                        <div class="pic pic-left"><img :src="files[8].url"></div>
-                        <div class="pic"><img :src="files[8].url"></div>
-                    </div>
-                </div> -->
             </div>
         </section>
-        <button @click="upload">shangchuan</button>
         <navigator open-type="redirect" url="/pages/index/main" class="btn" >返回首页</navigator >
     </div>
 </template>
@@ -178,23 +117,7 @@
             return {
                 dataInfo:{},
                 id: '',
-                test:[
-                    {
-                        file_type: 0,
-                        url: 'fdfdf',
-                        title:'证面'
-                    },
-                    {
-                        file_type: 0,
-                        url: 'fdfdf',
-                        title:'反面'
-                    },
-                    {
-                        file_type: 1,
-                        url: 'fdfdf',
-                        title:'户口本'
-                    }
-                ]
+                fileList: [],
             }
         },
         onLoad (opt) {
@@ -208,49 +131,33 @@
             }
         },
         mounted (){
-            let types = [];
-            let list = [];
-            for (let i = 0; i < this.test.length; i++) {
-                console.log(`this.test[i]:`,types.indexOf(this.test[i].file_type));
-                // if (types.indexOf(this.test[i].file_type) == -1){
-                //     types.push(this.test[i].file_type);
-                //     list.push(this.types[i]);
-                // } else {
-                //     console.log(`types.indexOf(this.test[i].file_type):`,types.indexOf(this.test[i].file_type));
-                // }
-                
-            }
-
-            // this.test.forEach(file => {
-            //     if (types.indexOf(file.file_type) == -1) {
-
-            //     }
-            // });
+            
         },
         methods :{
             fetchData (id) {
                 this.$http.get(`/api/order_detail/${id}`).then( res => {
                     console.log(`res:`,res);
                     this.dataInfo = res.data[0];
-                    let files = res.data[0];
+                    let files = res.data[1];
+
+                    let obj = {};
+                    this.fileList = files.reduce((file,next)=>{
+                        if (obj[next.file_type]){
+                            obj[next.file_type].url2 = next.url
+                        } else {
+                            obj[next.file_type] = next ;
+                            file.push(next)
+                        }
+                        return file;
+                    },[])
+                    console.log(`files:`,this.fileList);
                 })
             },
-            upload () {
-                const self = this;
-                wx.chooseImage({
-                    success(res) {
-                        const tempFilePaths = res.tempFilePaths
-                        wx.uploadFile({
-                            url: 'https://www.shuangwin.com/api/upload_image', 
-                            filePath: tempFilePaths[0],
-                            name: 'file',
-                            success(res) {
-                                const data = res.data
-                                console.log(`res:`,res);
-                            }
-                        })
-                    }
-                })
+            preview (url){
+                wx.previewImage({
+                    current: url, // 当前显示图片的http链接
+                    urls: [url] // 需要预览的图片http链接列表
+                })                
             }
         }
     }
@@ -299,6 +206,8 @@
                     margin: 15rpx 0 20rpx;
                     display: flex;
                     justify-content: center;
+                    width: 165rpx;
+                    overflow: hidden;
                     .pic {
                         width: 75rpx;
                         height: 50rpx;

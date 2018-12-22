@@ -1,12 +1,11 @@
 {
     "pages": [
         "pages/index/main",
-        "pages/formshow/main",
-        "pages/formupload/main",
-        "pages/applyinfo/main",
+        "pages/client/main",
         "pages/investman/main",
         "pages/salesman/main",
-        "pages/client/main",
+        "pages/formshow/main",
+        "pages/formupload/main",
         "pages/apply/main",
         "pages/error/main",
         "pages/about/main"
