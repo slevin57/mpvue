@@ -9,15 +9,15 @@
             </div>
             <div class="row">
                 <p class="title name">手机号：</p>
-                <input class='input' type="text" v-model="tel">
+                <input class='input' type="number" v-model="tel">
             </div>
             <div class="row">
                 <p class="title name">身份证号：</p>
-                <input class='input' type="text" v-model="idcard">
+                <input class='input' type="number" v-model="idcard">
             </div>
             <div class="row">
                 <p class="title name">借款金额：</p>
-                <input class='input' type="text" v-model="apply_amount">
+                <input class='input' type="number" v-model="apply_amount">
             </div>
             <div class="row">
                 <p class="title name">备注：</p>
@@ -50,10 +50,19 @@ export default {
         }
     },
     mounted () {
+        console.log(`44:`,44);
         this.apply = false;
     },
     methods:{
         submit() {
+            if (!this.tel || !this.idcard || !this.name){
+                wx.showToast({
+                    title: '请填写完整',
+                    icon: 'none',
+                    duration: 2000
+                })
+                return;
+            }
             this.$http.post('/api/apply_order',{
                 client_id: this.client_id,
                 name:this.name,
@@ -64,6 +73,12 @@ export default {
             }).then((res => {
                 if (res.data == 200) {
                     this.apply = true;
+        this.client_id = '';
+        this.name = '';
+        this.tel = '';
+        this.idcard = '';
+        this.apply_amount = '';
+        this.client_remark = '';
                 } else {
                     wx.showToast({
                         title: '请求失败',

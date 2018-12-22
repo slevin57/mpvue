@@ -73,7 +73,7 @@ house_type:房产类型
 house_owner:产权人
 owner_type:单独或共同拥有（0：未知，1单独拥有，2共同拥有）
 house_address:房产地址
-house_owner_certificate:权属证明
+house_owner_certificate:权属证明编号
 /////////////////////////////////////////////
 order_id:订单信息表ID
 url:附件存储地址

@@ -11,10 +11,10 @@
                 <div class="item item1">{{dataInfo.apply_amount}}</div>
                 <div class="item item2">{{dataInfo.service_type}}</div>
             </div>
-            <div class="row">
+            <!-- <div class="row">
                 <div class="item item1">{{dataInfo.charge}}</div>
                 <div class="item item2">{{dataInfo.returnfee}}</div>
-            </div>
+            </div> -->
             <div class="row">
                 <div class="item item1">{{dataInfo.assess_source}}</div>
                 <div class="item item2">{{dataInfo.assess_unit_price}}</div>
@@ -39,9 +39,9 @@
                 <div class="item item1">{{dataInfo.tel}}</div>
             </div>
             <div class="row">
-                <div class="item item1"><radio value="1" :checked="dataInfo.marital_status==1" disabled/>已婚</div>
-                <div class="item item1"><radio value="1" :checked="dataInfo.marital_status==0" disabled/>未婚</div>
-                <div class="item item1"><radio value="1" :checked="dataInfo.marital_status==2" disabled/>离异</div>
+                <div class="item item1" v-if="dataInfo.marital_status==0">未婚</div>
+                <div class="item item1" v-if="dataInfo.marital_status==1">已婚</div>
+                <div class="item item1" v-if="dataInfo.marital_status==2">离异</div>
             </div>
         </section>
         <section class="sec sec-basic ">
@@ -63,9 +63,9 @@
         <section class="sec sec-basic ">
             <h4 class="title title-basic"> 信用记录 </h4>
             <div class="row">
-                <div class="item item1"><radio value="1" :checked="dataInfo.credit_record_status==0" disabled/>止付</div>
-                <div class="item item1"><radio value="1" :checked="dataInfo.credit_record_status==1" disabled/>冻结</div>
-                <div class="item item1"><radio value="1" :checked="dataInfo.credit_record_status==2" disabled/>呆账</div>
+                <div class="item item1" v-if="dataInfo.credit_record_status==0">止付</div>
+                <div class="item item1" v-if="dataInfo.credit_record_status==1">冻结</div>
+                <div class="item item1" v-if="dataInfo.credit_record_status==2">呆账</div>
             </div>
             <div class="row">
                 <div class="item item1">{{dataInfo.client_remark}}</div>
@@ -90,14 +90,22 @@
         <section class="sec sec-pics ">
             <h4 class="title title-basic"> 附件资料 </h4>
             <div class="row">
-                <div class="item">
-                    <p class="item-name">身份证正反面</p>
+                <div class="item" v-for="item in test">
+                    <p class="item-name" v-if="item.file_type=='0'">身份证正反面</p>
+                    <p class="item-name" v-if="item.file_type=='1'">户口本</p>
+                    <p class="item-name" v-if="item.file_type=='2'">婚姻证明</p>
+                    <p class="item-name" v-if="item.file_type=='3'">征信记录</p>
+                    <p class="item-name" v-if="item.file_type=='4'">房产证</p>
+                    <p class="item-name" v-if="item.file_type=='5'">执照或工作证明</p>
+                    <p class="item-name" v-if="item.file_type=='6'">银行流水</p>
+                    <p class="item-name" v-if="item.file_type=='7'">评估截图</p>
+                    <p class="item-name" v-if="item.file_type=='8'">其他补充资料</p>
                     <div class="pics">
-                        <div class="pic pic-left"><img :src="files[0].url"></img></div>
-                        <div class="pic"><img :src="files[0].url"></img></div>
+                        <!-- <div class="pic pic-left"><img :src="item.url"></img></div> -->
+                        <!-- <div class="pic"><img :src="item.url"></img></div> -->
                     </div>
                 </div>
-                <div class="item">
+                <!-- <div class="item">
                     <p class="item-name">户口本</p>
                     <div class="pics">
                         <div class="pic pic-left"><img :src="files[1].url"></img></div>
@@ -156,9 +164,10 @@
                         <div class="pic pic-left"><img :src="files[8].url"></div>
                         <div class="pic"><img :src="files[8].url"></div>
                     </div>
-                </div>
+                </div> -->
             </div>
         </section>
+        <button @click="upload">shangchuan</button>
         <navigator open-type="redirect" url="/pages/index/main" class="btn" >返回首页</navigator >
     </div>
 </template>
@@ -169,6 +178,23 @@
             return {
                 dataInfo:{},
                 id: '',
+                test:[
+                    {
+                        file_type: 0,
+                        url: 'fdfdf',
+                        title:'证面'
+                    },
+                    {
+                        file_type: 0,
+                        url: 'fdfdf',
+                        title:'反面'
+                    },
+                    {
+                        file_type: 1,
+                        url: 'fdfdf',
+                        title:'户口本'
+                    }
+                ]
             }
         },
         onLoad (opt) {
@@ -181,12 +207,49 @@
                 }
             }
         },
+        mounted (){
+            let types = [];
+            let list = [];
+            for (let i = 0; i < this.test.length; i++) {
+                console.log(`this.test[i]:`,types.indexOf(this.test[i].file_type));
+                // if (types.indexOf(this.test[i].file_type) == -1){
+                //     types.push(this.test[i].file_type);
+                //     list.push(this.types[i]);
+                // } else {
+                //     console.log(`types.indexOf(this.test[i].file_type):`,types.indexOf(this.test[i].file_type));
+                // }
+                
+            }
+
+            // this.test.forEach(file => {
+            //     if (types.indexOf(file.file_type) == -1) {
+
+            //     }
+            // });
+        },
         methods :{
             fetchData (id) {
                 this.$http.get(`/api/order_detail/${id}`).then( res => {
                     console.log(`res:`,res);
                     this.dataInfo = res.data[0];
-                    this.files = res.data[0]
+                    let files = res.data[0];
+                })
+            },
+            upload () {
+                const self = this;
+                wx.chooseImage({
+                    success(res) {
+                        const tempFilePaths = res.tempFilePaths
+                        wx.uploadFile({
+                            url: 'https://www.shuangwin.com/api/upload_image', 
+                            filePath: tempFilePaths[0],
+                            name: 'file',
+                            success(res) {
+                                const data = res.data
+                                console.log(`res:`,res);
+                            }
+                        })
+                    }
                 })
             }
         }
