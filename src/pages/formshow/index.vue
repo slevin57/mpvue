@@ -8,8 +8,8 @@
                 基本资料
             </h4>
             <div class="row">
-                <div class="item item1">{{dataInfo.apply_amount}}</div>
-                <div class="item item2">{{dataInfo.service_type}}</div>
+                <div class="item bottom-none ">{{dataInfo.apply_amount}}</div>
+                <div class="item left-none bottom-none">{{dataInfo.service_type}}</div>
             </div>
             <!-- <div class="row">
                 <div class="item item1">{{dataInfo.charge}}</div>
@@ -17,8 +17,8 @@
             </div> -->
             <div class="row">
                 <div class="item item1">{{dataInfo.assess_source}}</div>
-                <div class="item item2">{{dataInfo.assess_unit_price}}</div>
-                <div class="item item2">{{dataInfo.assess_gross_amount}}</div>
+                <div class="item item2 left-none">{{dataInfo.assess_unit_price}}</div>
+                <div class="item item2 left-none">{{dataInfo.assess_gross_amount}}</div>
             </div>
         </section>
         <section class="sec sec-basic ">
@@ -26,14 +26,14 @@
                 借款人资料
             </h4>
             <div class="row">
-                <div class="item item1">{{dataInfo.name}}</div>
-                <div class="item item2" v-if="dataInfo.gender==0">未知</div>
-                <div class="item item2" v-if="dataInfo.gender==1">男</div>
-                <div class="item item2" v-if="dataInfo.gender==2">女</div>
-                <div class="item item2">{{dataInfo.age}}</div>
+                <div class="item bottom-none item1">{{dataInfo.name}}</div>
+                <div class="item bottom-none left-nonne item2" v-if="dataInfo.gender==0">未知</div>
+                <div class="item bottom-none left-nonne item2" v-if="dataInfo.gender==1">男</div>
+                <div class="item bottom-none left-nonne item2" v-if="dataInfo.gender==2">女</div>
+                <div class="item bottom-none left-nonne item2">{{dataInfo.age}}</div>
             </div>
             <div class="row">
-                <div class="item item1">{{dataInfo.idcard}}</div>
+                <div class="item item1 bottom-none">{{dataInfo.idcard}}</div>
             </div>
             <div class="row">
                 <div class="item item1">{{dataInfo.tel}}</div>
@@ -47,14 +47,14 @@
         <section class="sec sec-basic ">
             <h4 class="title title-basic"> 共借人信息 </h4>
             <div class="row">
-                <div class="item item1">{{dataInfo.coborrower_name}}</div>
-                <div class="item item2" v-if="dataInfo.coborrower_gender==1">男</div>
-                <div class="item item2" v-if="dataInfo.coborrower_gender==2">女</div>
-                <div class="item item2" v-if="dataInfo.coborrower_gender==0">未知</div>
-                <div class="item item2">{{dataInfo.coborrower_relation}}</div>
+                <div class="item bottom-none item1">{{dataInfo.coborrower_name}}</div>
+                <div class="item bottom-none left-none item2" v-if="dataInfo.coborrower_gender==1">男</div>
+                <div class="item bottom-none left-none item2" v-if="dataInfo.coborrower_gender==2">女</div>
+                <div class="item bottom-none left-none item2" v-if="dataInfo.coborrower_gender==0">未知</div>
+                <div class="item bottom-none left-none item2">{{dataInfo.coborrower_relation}}</div>
             </div>
             <div class="row">
-                <div class="item item1">{{dataInfo.coborrower_idcard}}</div>
+                <div class="item bottom-none item1">{{dataInfo.coborrower_idcard}}</div>
             </div>
             <div class="row">
                 <div class="item item1">{{dataInfo.coborrower_tel}}</div>
@@ -74,14 +74,14 @@
         <section class="sec sec-basic ">
             <h4 class="title title-basic"> 抵押物资料 </h4>
             <div class="row">
-                <div class="item item1">{{dataInfo.house_type}}</div>
-                <div class="item item1">{{dataInfo.house_address}}</div>
+                <div class="item bottom-none item1">{{dataInfo.house_type}}</div>
+                <div class="item bottom-none left-none item1">{{dataInfo.house_address}}</div>
             </div>
             <div class="row">
-                <div class="item item1">{{dataInfo.house_owner}}</div>
-                <div class="item item1" v-if="dataInfo.owner_type==0">未知</div>
-                <div class="item item1" v-if="dataInfo.owner_type==1">单独拥有</div>
-                <div class="item item1" v-if="dataInfo.owner_type==2">共同拥有</div>
+                <div class="item bottom-none item1">{{dataInfo.house_owner}}</div>
+                <div class="item bottom-none left-none item1" v-if="dataInfo.owner_type==0">未知</div>
+                <div class="item bottom-none left-none item1" v-if="dataInfo.owner_type==1">单独拥有</div>
+                <div class="item bottom-none left-none item1" v-if="dataInfo.owner_type==2">共同拥有</div>
             </div>
             <div class="row">
                 <div class="item item1">{{dataInfo.house_owner_certificate}}</div>
@@ -186,10 +186,19 @@
         .row {
             display: flex;
             // height: 40rpx;
+            textarea {
+                min-height: 80rpx;
+            }
             .item {
                 flex: 1;
                 border: 1px solid #e3e3e3;
                 padding: 5rpx 20rpx;
+            }
+            .bottom-none {
+                border-bottom: none;
+            }
+            .left-none {
+                border-left: none;
             }
         }
     }

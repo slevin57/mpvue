@@ -59,6 +59,7 @@ import { mapGetters } from 'vuex'
         },
         mounted () {
             this.fetchData();
+            this.fetchPhone();
         },
         methods :{
             fetchData () {
@@ -66,12 +67,59 @@ import { mapGetters } from 'vuex'
                     this.list = data;
                 })
             },
+            fetchPhone () {
+                this.$http.post('/api/getUserInfo',{
+                    userId: this.userInfo.client_id,
+                    status: this.userInfo.status,
+                }).then(res => {
+                    console.log(`res:`,res);
+                    if (res.status == 200){
+                        this.phone = res.data[0].tel;
+                    } else {
+                        wx.showToast({
+                            title:'请求出错',
+                            icon:'none',
+                            duration:2000,
+                        })
+                    }
+                }).catch(err => {
+                    console.log(`出错:`,err);
+                })
+            },
             changePhone () {
-                console.log(`this.phone:`,this.phone);
-                wx.showToast({
-                    title:'修改成功',
-                    icon: 'none',
-                    duration: 1000,
+                const self = this;
+                if (!this.phone){
+                    wx.showToast({
+                        title:'请填写完整信息',
+                        icon:'none',
+                        duration:1000,
+                    })
+                    return;
+                }
+                wx.showLoading({title:'修改提交中'});
+                this.$http.post('/api/changeUserInfo',{
+                    name:this.userInfo.nickName,
+                    tel:this.phone,
+                    userId: this.userInfo.client_id,
+                    status: this.userInfo.status,                    
+                }).then(res => {
+                    wx.hideLoading()
+                    if (res.status == 200){
+                        wx.showToast({
+                            title: '修改成功',
+                            icon:'success',
+                            duration:1000,
+                        })
+                    } else {
+                        wx.showToast({
+                            title:'提交出错',
+                            icon:'none',
+                            duration:1000,
+                        })                    
+                    }
+                }).catch(err => {
+                    wx.hideLoading();
+                    console.log(`提交手机出错:`,err);
                 })
             }
         }
@@ -128,6 +176,9 @@ import { mapGetters } from 'vuex'
             .phone-num{
                 display: flex;
                 align-items: center;
+                input {
+                    border-bottom: 1px solid #e3e3e3;
+                }
             }
             .btn{
                 background-color: #4aa143;

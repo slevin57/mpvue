@@ -1,9 +1,9 @@
 {
     "pages": [
         "pages/index/main",
+        "pages/salesman/main",
         "pages/client/main",
         "pages/investman/main",
-        "pages/salesman/main",
         "pages/formshow/main",
         "pages/formupload/main",
         "pages/apply/main",

@@ -36,7 +36,7 @@
             </div>
             <div class="phone-box">
                 <div class="phone-num">
-                    手机号：<input v-model="phone" type="number">
+                    手机号：<input v-model="phone" type="number" placeholder="请填写手机号">
                 </div>
                 <div class="btn" @click="changePhone()"> 修改 </div>
             </div>
@@ -90,6 +90,7 @@ import { mapGetters } from 'vuex'
             this.clientId = this.userInfo.client_id;
             this.fetchInvestmanData();
             this.fetchApprovedData();
+            this.fetchPhone();
         },
         methods :{
             toggleTab (tab) {
@@ -111,12 +112,59 @@ import { mapGetters } from 'vuex'
                     url: `/pages/formshow/main?id=${id}`,
                 })
             },
+            fetchPhone () {
+                this.$http.post('/api/getUserInfo',{
+                    userId: this.userInfo.client_id,
+                    status: this.userInfo.status,
+                }).then(res => {
+                    console.log(`res:`,res);
+                    if (res.status == 200){
+                        this.phone = res.data[0].tel;
+                    } else {
+                        wx.showToast({
+                            title:'请求出错',
+                            icon:'none',
+                            duration:2000,
+                        })
+                    }
+                }).catch(err => {
+                    console.log(`出错:`,err);
+                })
+            },
             changePhone () {
-                console.log(`this.phone:`,this.phone);
-                wx.showToast({
-                    title:'修改成功',
-                    icon: 'none',
-                    duration: 1000,
+                const self = this;
+                if (!this.phone){
+                    wx.showToast({
+                        title:'请填写完整信息',
+                        icon:'none',
+                        duration:1000,
+                    })
+                    return;
+                }
+                wx.showLoading({title:'修改提交中'});
+                this.$http.post('/api/changeUserInfo',{
+                    name:this.userInfo.nickName,
+                    tel:this.phone,
+                    userId: this.userInfo.client_id,
+                    status: this.userInfo.status,                    
+                }).then(res => {
+                    wx.hideLoading()
+                    if (res.status == 200){
+                        wx.showToast({
+                            title: '修改成功',
+                            icon:'success',
+                            duration:1000,
+                        })
+                    } else {
+                        wx.showToast({
+                            title:'提交出错',
+                            icon:'none',
+                            duration:1000,
+                        })                    
+                    }
+                }).catch(err => {
+                    wx.hideLoading();
+                    console.log(`提交手机出错:`,err);
                 })
             }
         }
@@ -247,6 +295,9 @@ import { mapGetters } from 'vuex'
                 .phone-num{
                     display: flex;
                     align-items: center;
+                    input {
+                        border-bottom: 1px solid #e3e3e3;
+                    }
                 }
                 .btn{
                     background-color: #4aa143;

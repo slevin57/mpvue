@@ -3,11 +3,16 @@
 <div class="index-page">
     <sectionn v-if="!canGetInfo" class="sec-mask">
         <button v-show="!loading" type="primary" open-type="getUserInfo" @getuserinfo="bindGetUserInfo" @click="getUserInfoClick">获取权限</button>
-        <div v-if="newClient">
-            填写手机号：<input type="number" v-model="phone">
-            <div class="save-phone" @click="savePhone()">
-                保存手机号
+        <div v-if="newClient" class="new-user-form">
+            <div class="row">
+                <p class="title name">姓名：</p>
+                <input class='input' type="text" v-model="form.name">
             </div>
+            <div class="row">
+                <p class="title name">手机号：</p>
+                <input class='input' type="number" v-model="form.tel">
+            </div>
+            <button class="btn" @click="savePhone()">提交</button>
         </div>
     </sectionn>
     <section class="sec swiper-sec">
@@ -34,7 +39,7 @@
 </div>
 </template>
 <script>
-import {mapMutations} from 'vuex'
+import {mapMutations,mapGetters} from 'vuex'
 
 // serId 就是那个相对应的client_id 或 agent_id 或 capital_id
 export default {
@@ -57,7 +62,14 @@ export default {
             code: '',//wx.login拿回来的code
             loading: true,
             newClient: false,//新用户
+            form:{
+                name:'',
+                tel:'',
+            }
         }
+    },
+    computed : {
+        ...mapGetters(["userInfo"])
     },
     onLoad (){
 
@@ -103,12 +115,13 @@ export default {
                         console.log(`后台交互拿回数据:`,res);
                         userInfo.client_id = res.data.userId;
                         userInfo.status = res.data.status;
+                        userInfo.oldUser = res.data.oldUser;
                         self.changeStatus(userInfo);
                         wx.hideLoading();
                         // self.canGetInfo = true;
-                        let first = true;
-                        if (first) {
+                        if (res.data.oldUser == 0) {
                             self.newClient = true;
+                            return;
                         } else {
                             self.canGetInfo = true;
                             // 根据身份跳转
@@ -156,12 +169,24 @@ export default {
                     console.log(`后台交互拿回数据:`,res);
                     userInfo.client_id = res.data.userId;
                     userInfo.status = res.data.status;
+                    userInfo.oldUser = res.data.oldUser;
                     self.changeStatus(userInfo);
-                    self.canGetInfo = true;
-                    self.loading = false;
                     wx.hideLoading();
-                    // 这里做用户跳转
-                    self.matchPage(res.data.status);
+                    // self.canGetInfo = true;
+                    if (res.data.oldUser == 0) {
+                        self.newClient = true;
+                        return;
+                    } else {
+                        self.canGetInfo = true;
+                        // 根据身份跳转
+                        self.matchPage(res.data.status);
+                    }
+                    // self.changeStatus(userInfo);
+                    // self.canGetInfo = true;
+                    // self.loading = false;
+                    // wx.hideLoading();
+                    // // 这里做用户跳转
+                    // self.matchPage(res.data.status);
                 }).catch(err => {
                     self.loading = false;
                     wx.hideLoading();
@@ -211,7 +236,44 @@ export default {
             }
         },
         savePhone () {
-
+            const self = this;
+            console.log(`this.form.name:`,this.form.name);
+            if (!this.form.name || !this.form.tel){
+                wx.showToast({
+                    title:'请填写完整信息',
+                    icon:'none',
+                    duration:1000,
+                })
+                return;
+            }
+            wx.showLoading({title:'表单提交中'});
+            this.$http.post('/api/changeUserInfo',{
+                name:this.form.name,
+                tel:this.form.tel,
+                userId: this.userInfo.client_id,
+                status: this.userInfo.status,
+            }).then(res => {
+                wx.hideLoading()
+                if (res.status == 200){
+                    wx.showToast({
+                        title: '提交成功'+res.data.msg,
+                        icon:'success',
+                        duration:1000,
+                        success () {
+                            self.matchPage(self.userInfo.status);
+                        }
+                    })
+                } else {
+                    wx.showToast({
+                        title:'提交出错',
+                        icon:'none',
+                        duration:1000,
+                    })                    
+                }
+            }).catch(err => {
+                wx.hideLoading();
+                console.log(`提交手机出错:`,err);
+            })
         }
     }
 }
@@ -271,6 +333,27 @@ export default {
     z-index: 1;
     button {
         width: 50%;
+    }
+    .new-user-form {
+        .title{
+            margin:20rpx 0 35rpx;
+        }
+        .input{
+            height: 41rpx;
+            border-bottom: 1px solid #000;
+        }
+        .btn{
+            width: 70%;
+            height: 100rpx;
+            background-color:#259b24;
+            color: #fff; 
+            margin: 80rpx auto;
+            border-radius: 4px;
+            text-align: center;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
     }
 }
 </style>

@@ -11,21 +11,21 @@
                 </h4>
                 <div class="row">
                     <input v-model="form.prepare_amount" 
-                        class="item item1" type="number" placeholder="借款金额">
+                        class="item nr nb item1" type="number" placeholder="借款金额">
                     <input v-model="form.service_type" 
-                        class="item item2" type="number" placeholder="业务类型">
+                        class="item nb item2" type="number" placeholder="业务类型">
                 </div>
                 <div class="row">
                     <input v-model="form.charge" 
-                        class="item item1" type="number" placeholder="收费">
+                        class="item nb nr item1" type="number" placeholder="收费">
                     <input v-model="form.returnfee" 
-                        class="item item2" type="number" placeholder="返费">
+                        class="item nb item2" type="number" placeholder="返费">
                 </div>
                 <div class="row">
                     <input v-model="form.assess_source" 
-                        class="item item1" type="txt" placeholder="评估来源">
+                        class="item nr item1" type="txt" placeholder="评估来源">
                     <input v-model="form.assess_unit_price" 
-                        class="item item1" type="number" placeholder="评估单价">
+                        class="item nr item1" type="number" placeholder="评估单价">
                     <input v-model="form.assess_gross_amount" 
                         class="item item1" type="number" placeholder="评估总额">
                 </div>
@@ -36,17 +36,17 @@
                 </h4>
                 <div class="row">
                     <input v-model="form.name" 
-                        class="item item1" type="txt" placeholder="借款人姓名">
+                        class="item nb nr item1" type="txt" placeholder="借款人姓名">
                     <picker @change="genderChange" v-model="form.gender" :range="genderList" 
-                        class="item item2 gender-picker">
+                        class="item nb nr item2 gender-picker">
                         <view class="picker">性别：{{genderList[form.gender]}}</view>
                     </picker>
                     <input v-model="form.age" 
-                        class="item item3" type="number" placeholder="借款人年龄">
+                        class="item nb nr item3" type="number" placeholder="借款人年龄">
                 </div>
                 <div class="row">
                     <input v-model="form.idcard" 
-                        class="item item1" type="number" placeholder="借款人身份证号">
+                        class="item nb item1" type="number" placeholder="借款人身份证号">
                 </div>
                 <div class="row">
                     <input v-model="form.tel" 
@@ -62,17 +62,17 @@
                 <h4 class="title title-basic"> 共借人信息 </h4>
                 <div class="row">
                     <input v-model="form.coborrower_name" 
-                        class="item item1" type="txt" placeholder="共借人姓名">
+                        class="item nr nb item1" type="txt" placeholder="共借人姓名">
                     <picker @change="coborrowerChange" v-model="form.coborrower_gender" :range="genderList" 
-                        class="item item2 gender-picker">
+                        class="item nr nb item2 gender-picker">
                         <view class="picker">性别：{{genderList[form.coborrower_gender]}}</view>
                     </picker>
                     <input v-model="form.coborrower_relation" 
-                        class="item item1" type="txt" placeholder="关系">
+                        class="item nb item1" type="txt" placeholder="关系">
                 </div>
                 <div class="row">
                     <input v-model="form.coborrower_idcard" 
-                        class="item item1" type="number" placeholder="共借人身份证号">
+                        class="item nb item1" type="number" placeholder="共借人身份证号">
                 </div>
                 <div class="row">
                     <input v-model="form.coborrower_tel" 
@@ -86,27 +86,27 @@
                     </div>
                 </h4>
                 <radio-group v-if="form.credit_record==1" class="row radio-group" @change="recordChange">
-                    <label class="item radio" v-for="(item, index) in recordList" :key="item.status">
+                    <label class="item  nb radio" v-for="(item, index) in recordList" :key="item.status">
                         <radio :value="item.value" :checked="item.checked"/> {{item.status}}
                     </label>
                 </radio-group>
-                <div class="row">
-                    <textarea v-model="form.overdue" class="item" auto-height placeholder="逾期记录" />
+                <div class="row" v-if="form.credit_record==1">
+                    <textarea v-model="form.overdue" class="item nt" auto-height placeholder="逾期记录" />
                 </div>
             </section>
             <section class="sec sec-house ">
                 <h4 class="title title-basic"> 抵押物资料 </h4>
                 <div class="row">
                     <input v-model="form.house_type" 
-                        class="item item1" type="txt" placeholder="房产类型">
+                        class="item nr item1" type="txt" placeholder="房产类型">
                     <input v-model="form.house_owner_certificate" 
                         class="item item1" type="number" placeholder="权属证明编号">
                 </div>
                 <div class="row">
                     <input v-model="house_owner" 
-                        class="item item1" type="txt" placeholder="产权人">
-                    <radio-group  class="row radio-group" @change="houseOwnerChange">
-                        <label class="item radio" v-for="(item, index) in ownerTypeList" :key="item.status">
+                        class="item nb nt nr item1" type="txt" placeholder="产权人">
+                    <radio-group  class="row nb radio-group" @change="houseOwnerChange">
+                        <label class="item nb radio" v-for="(item, index) in ownerTypeList" :key="item.status">
                             <radio :value="item.value" :checked="item.checked"/> {{item.status}}
                         </label>
                     </radio-group>
@@ -287,6 +287,7 @@ import { mapGetters } from 'vuex'
             this.clientId = this.userInfo.client_id;
             this.fetchData();
             this.initForm();
+            this.fetchPhone();
         },
         methods :{
             toggleTab (tab) {
@@ -453,11 +454,59 @@ import { mapGetters } from 'vuex'
                 this.form.house_address = '';
                 this.fileList = [];
             },
+            fetchPhone () {
+                this.$http.post('/api/getUserInfo',{
+                    userId: this.userInfo.client_id,
+                    status: this.userInfo.status,
+                }).then(res => {
+                    console.log(`resf:`,res);
+                    if (res.status == 200){
+                        this.phone = res.data[0].tel;
+                    } else {
+                        wx.showToast({
+                            title:'请求出错',
+                            icon:'none',
+                            duration:2000,
+                        })
+                    }
+                }).catch(err => {
+                    console.log(`出错:`,err);
+                })
+            },
             changePhone () {
-                wx.showToast({
-                    title:'修改成功',
-                    icon: 'none',
-                    duration: 1000,
+                const self = this;
+                if (!this.phone){
+                    wx.showToast({
+                        title:'请填写完整信息',
+                        icon:'none',
+                        duration:1000,
+                    })
+                    return;
+                }
+                wx.showLoading({title:'修改提交中'});
+                this.$http.post('/api/changeUserInfo',{
+                    name:this.userInfo.nickName,
+                    tel:this.phone,
+                    userId: this.userInfo.client_id,
+                    status: this.userInfo.status,                    
+                }).then(res => {
+                    wx.hideLoading()
+                    if (res.status == 200){
+                        wx.showToast({
+                            title: '修改成功',
+                            icon:'success',
+                            duration:1000,
+                        })
+                    } else {
+                        wx.showToast({
+                            title:'提交出错',
+                            icon:'none',
+                            duration:1000,
+                        })                    
+                    }
+                }).catch(err => {
+                    wx.hideLoading();
+                    console.log(`提交手机出错:`,err);
                 })
             }
         }
@@ -508,6 +557,18 @@ import { mapGetters } from 'vuex'
                         border: 1px solid #e3e3e3;
                         padding: 5rpx 20rpx;
                     }
+                    textarea {
+                        min-height: 80rpx;
+                    }
+                    .nb{
+                        border-bottom: none;
+                    }
+                    .nt{
+                        border-top: none;
+                    }
+                    .nr {
+                        border-right: none;
+                    }
                 }
                 .gender-picker{
                     display: flex;
@@ -518,7 +579,8 @@ import { mapGetters } from 'vuex'
                 }
                 .radio-group {
                     justify-content: space-around;
-                    border-bottom: 1px solid #e3e3e3;
+                    border: 1px solid #e3e3e3;
+                    border-top: none;
                     .radio {
                         border: none;
                     }
@@ -624,6 +686,9 @@ import { mapGetters } from 'vuex'
                 .phone-num{
                     display: flex;
                     align-items: center;
+                    input {
+                        border-bottom: 1px solid #e3e3e3;
+                    }
                 }
                 .btn{
                     background-color: #4aa143;
