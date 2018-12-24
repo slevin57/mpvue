@@ -102,6 +102,7 @@
                     <p class="item-name" v-if="item.file_type=='8'">其他补充资料</p>
                     <div class="pics">
                         <div class="pic pic-left" @click="preview(item.url)"><img :src="item.url"></img></div>
+                        <div class="pic pic-left" @click="preview(item.url)"><img :src="item.url"></img></div>
                         <div class="pic" v-if="item.url2" @click="preview(item.url2)"><img :src="item.url2"></img></div>
                     </div>
                 </div>
@@ -208,15 +209,12 @@
             .item {
                 display: flex;
                 flex-direction: column;
-                // .item-title{
-
-                // }
                 .pics {
                     margin: 15rpx 0 20rpx;
                     display: flex;
                     justify-content: center;
                     width: 165rpx;
-                    overflow: hidden;
+                    overflow-x: scroll;
                     .pic {
                         width: 75rpx;
                         height: 50rpx;

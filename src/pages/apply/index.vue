@@ -27,7 +27,7 @@
         <button class="btn" @click="submit()">提交</button>
     </div>
     <div v-if="!apply" class="footer">
-        广东双赢信息科技有限公司
+        广东双盈科技信息有限公司
     </div>
     <div v-else class="applied">
         <div class="row">您的申请已提交</div>

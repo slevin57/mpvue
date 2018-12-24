@@ -22,9 +22,9 @@
         :autoplay="true"
         :interval="interval"
         :duration="duration" >
-            <block v-for="(item,index) in imgs" :key="index">
+            <block v-for="(item,index) in banner" :key="index">
                 <swiper-item>
-                    <image :src="item.url" class="slide-image" mode="aspectFit" />
+                    <image :src="item.pic" class="slide-image" mode="aspectFit" />
                 </swiper-item>
             </block>
         </swiper>
@@ -53,6 +53,7 @@ export default {
                     url:'/static/images/test.jpg',
                 },
             ],
+            banner:[],
             phone: '',
             indicatorDots: false,
             autoplay: false,
@@ -75,6 +76,7 @@ export default {
 
     },
     mounted (){
+        this.fetchBanner();
         this.loading = true;
         this.canGetInfo = false;
         const self = this;
@@ -123,7 +125,7 @@ export default {
                             self.newClient = true;
                             return;
                         } else {
-                            self.canGetInfo = true;
+                            // self.canGetInfo = true;
                             // 根据身份跳转
                             self.matchPage(res.data.status);
                         }
@@ -177,7 +179,7 @@ export default {
                         self.newClient = true;
                         return;
                     } else {
-                        self.canGetInfo = true;
+                        // self.canGetInfo = true;
                         // 根据身份跳转
                         self.matchPage(res.data.status);
                     }
@@ -224,16 +226,20 @@ export default {
         // 根据用户身份跳转不同页面
         // status=0:普通用户; status=1:业务员; status=2:资金方
         matchPage (status) {
+            console.log(`stadtus:`,status);
             switch (status) {
-                case 0:                              
+                case 0:                   
                     break;
                 case 1:
-                    wx.redirectTo({ url: '/pages/salesman/main' })   
+                    wx.redirectTo({ url: '/pages/salesman/main' }) 
                     break;
                 case 2:
                     wx.redirectTo({ url: '/pages/investman/main' })   
                     break;
-            }
+                default :
+                    break;
+            }         
+            this.canGetInfo = true;  
         },
         savePhone () {
             const self = this;
@@ -273,6 +279,11 @@ export default {
             }).catch(err => {
                 wx.hideLoading();
                 console.log(`提交手机出错:`,err);
+            })
+        },
+        fetchBanner () {
+            this.$http.get('/api/get_intro_pic').then(res => {
+                this.banner = res.data;
             })
         }
     }

@@ -1,19 +1,19 @@
 {
     "pages": [
         "pages/index/main",
+        "pages/formshow/main",
+        "pages/about/main",
         "pages/salesman/main",
         "pages/client/main",
         "pages/investman/main",
-        "pages/formshow/main",
         "pages/formupload/main",
         "pages/apply/main",
-        "pages/error/main",
-        "pages/about/main"
+        "pages/error/main"
   ],
   "window": {
     "backgroundTextStyle": "light",
     "navigationBarBackgroundColor": "transparent",
-    "navigationBarTitleText": "双赢科技",
+    "navigationBarTitleText": "双盈信息科技",
     "navigationBarTextStyle": "black"
   }
 }

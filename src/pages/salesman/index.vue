@@ -13,7 +13,7 @@
                     <input v-model="form.prepare_amount" 
                         class="item nr nb item1" type="number" placeholder="借款金额">
                     <input v-model="form.service_type" 
-                        class="item nb item2" type="number" placeholder="业务类型">
+                        class="item nb item2" type="txt" placeholder="业务类型">
                 </div>
                 <div class="row">
                     <input v-model="form.charge" 
@@ -100,7 +100,7 @@
                     <input v-model="form.house_type" 
                         class="item nr item1" type="txt" placeholder="房产类型">
                     <input v-model="form.house_owner_certificate" 
-                        class="item item1" type="number" placeholder="权属证明编号">
+                        class="item item1" type="txt" placeholder="权属证明编号">
                 </div>
                 <div class="row">
                     <input v-model="house_owner" 
@@ -119,48 +119,75 @@
                 <h4 class="title title-pics"> 附件资料 </h4>
                 <div class="row">
                     <div class="item">
-                        <p class="item-name">身份证正方面</p>
-                        <div class="pics" @click="upload(0)"> + </div>
+                        <p class="item-name">身份证正反面</p>
+                        <div class="pics" @click="upload(0)">
+                            <image class="preview-img" v-if="tempImg[0]" :src="tempImg[0]" alt=""></image>
+                            <cover-view>+</cover-view>
+                        </div>
                     </div>
                     <div class="item">
                         <p class="item-name">户口本</p>
-                        <div class="pics" @click="upload(1)"> + </div>
+                        <div class="pics" @click="upload(1)">
+                            <image class="preview-img" v-if="tempImg[1]" :src="tempImg[1]" alt=""></image>
+                            <cover-view>+</cover-view>
+                        </div>
                     </div>
                     <div class="item">
                         <p class="item-name">婚姻证明</p>
-                        <div class="pics" @click="upload(2)"> + </div>
+                        <div class="pics" @click="upload(2)">
+                            <image class="preview-img" v-if="tempImg[2]" :src="tempImg[2]" alt=""></image>
+                            <cover-view>+</cover-view>
+                        </div>
                     </div>
                 </div>   
                 <div class="row">
                     <div class="item">
                         <p class="item-name">征信记录</p>
-                        <div class="pics" @click="upload(3)"> + </div>
+                        <div class="pics" @click="upload(3)">
+                            <image class="preview-img" v-if="tempImg[3]" :src="tempImg[3]" alt=""></image>
+                            <cover-view>+</cover-view>
+                        </div>
                     </div>
                     <div class="item">
                         <p class="item-name">房产证</p>
-                        <div class="pics" @click="upload(4)"> + </div>
+                        <div class="pics" @click="upload(4)">
+                            <image class="preview-img" v-if="tempImg[4]" :src="tempImg[4]" alt=""></image>
+                            <cover-view>+</cover-view>
+                        </div>
                     </div>
                     <div class="item">
                         <p class="item-name">营业执照或工作证明</p>
-                        <div class="pics" @click="upload(5)"> + </div>
+                        <div class="pics" @click="upload(5)">
+                            <image class="preview-img" v-if="tempImg[5]" :src="tempImg[5]" alt=""></image>
+                            <cover-view>+</cover-view>
+                        </div>
                     </div>
                 </div> 
                 <div class="row">
                     <div class="item">
                         <p class="item-name">银行流水</p>
-                        <div class="pics" @click="upload(6)"> + </div>
+                        <div class="pics" @click="upload(6)">
+                            <image class="preview-img" v-if="tempImg[6]" :src="tempImg[6]" alt=""></image>
+                            <cover-view>+</cover-view>
+                        </div>
                     </div>
                     <div class="item">
                         <p class="item-name">评估截图</p>
-                        <div class="pics" @click="upload(7)"> + </div>
+                        <div class="pics" @click="upload(7)">
+                            <image class="preview-img" v-if="tempImg[7]" :src="tempImg[7]" alt=""></image>
+                            <cover-view>+</cover-view>
+                        </div>
                     </div>
                     <div class="item">
                         <p class="item-name">其他补充资料</p>
-                        <div class="pics" @click="upload(8)"> + </div>
+                        <div class="pics" @click="upload(8)">
+                            <image class="preview-img" v-if="tempImg[8]" :src="tempImg[8]" alt=""></image>
+                            <cover-view>+</cover-view>
+                        </div>
                     </div>
                 </div>              
             </section>
-            <div class="btn" @click="submit()">
+            <div class="submit-btn" @click="submit()">
                 确认提交
             </div>
         </div>
@@ -171,21 +198,22 @@
                 </div>
                 <div class="right">
                     <p class="name">昵称：{{userInfo.nickName}}</p>
-                    <p class="identify">用户身份：借款人</p>
+                    <p class="identify">用户身份：业务员</p>
                 </div>
             </div>
             <div class="phone-box">
                 <div class="phone-num">
-                    手机号：<input v-model="phone" type="number">
+                    手机号：<input v-model="phone" type="number" placeholder="请填写手机号">
+                    <div class="btn" @click="changePhone()"> 修改 </div>
                 </div>
-                <div class="btn" @click="changePhone()"> 修改 </div>
+                <span class="hint">点击上方电话可修改</span>
             </div>
             <div class="userplan">
                 <div class="title-box">
                     <span class="title">历史提交</span>
-                    <span class="detail">
+                    <!-- <span class="detail">
                         总计提交10，待提交2
-                    </span>
+                    </span> -->
                 </div>
                 <div class="table">
                     <div class="tr">
@@ -207,7 +235,7 @@
             </div>
         </div>
         <!-- <div class="footer">
-            广东双赢信息科技有限公司
+            广东双盈科技信息有限公司
         </div> -->
     </div>
 </template>
@@ -237,6 +265,17 @@ import { mapGetters } from 'vuex'
                     {status: '单独', value: 1, checked: 'true'},
                     {status: '共同', value: 2},
                 ],
+                tempImg:{
+                    0: '',
+                    1: '',
+                    2: '',
+                    3: '',
+                    4: '',
+                    5: '',
+                    6: '',
+                    7: '',
+                    8: '',
+                },
                 form:{
                     id:'',
                     agent_id:'',
@@ -335,7 +374,8 @@ import { mapGetters } from 'vuex'
                 }
                 wx.chooseImage({
                     success(res) {
-                        const tempFilePaths = res.tempFilePaths
+                        const tempFilePaths = res.tempFilePaths;
+                        wx.showLoading({ title:'图片上传中',  })
                         wx.uploadFile({
                             url: 'https://www.shuangwin.com/api/upload_image', 
                             filePath: tempFilePaths[0],
@@ -344,6 +384,8 @@ import { mapGetters } from 'vuex'
                                 file.file_type = type;
                                 file.url = res.data && JSON.parse(res.data);
                                 self.fileList.push(file);
+                                self.tempImg[type] = file.url;
+                                wx.hideLoading();
                                 wx.showToast({
                                     title: '上传成功',
                                     icon:'none',
@@ -351,6 +393,7 @@ import { mapGetters } from 'vuex'
                                 })
                             },
                             fail (err) {
+                                wx.hideLoading();
                                 wx.showToast({
                                     title:'上传失败'+err,
                                     icon:'none',
@@ -362,7 +405,7 @@ import { mapGetters } from 'vuex'
                 })
             },
             submit () {
-                if (this.fileList.length == 0) {
+                if (!this.form.tel || this.fileList.length == 0) {
                     wx.showToast({
                         title:'请填写完整',
                         icon:'none',
@@ -375,16 +418,26 @@ import { mapGetters } from 'vuex'
                 let data = [];
                 data.push(this.form);
                 data.push(this.fileList);
+                wx.showLoading({ title:'资料提交中...',  })
                 this.$http.post('api/update_orders',{
                     data
                 }).then(res => {
+                    wx.hideLoading();
                     if (res.data == 200 ){
                         this.initForm();
                         wx.showToast({
                             title: '提交成功',
-                            icon: 'nonne',
+                            icon: 'none',
                             duration: 2000,
                         })
+                    }
+                }).catch(err => {
+                    wx.hideLoading()
+                    console.log('提交出错:',err.status);
+                    if (err.status == 400){
+                        wx.showToast({title:'借款人手机错误',icon:'none',duration:1000})
+                    } else {
+                        wx.showToast({title:'提交出错',icon:'none',duration:1000})
                     }
                 })
             },
@@ -453,6 +506,10 @@ import { mapGetters } from 'vuex'
                 this.form.owner_type = '';
                 this.form.house_address = '';
                 this.fileList = [];
+                Object.keys(this.tempImg).forEach(item => {
+                    this.tempImg[item] = '';
+                })
+                console.log(`this.tempImg:`,this.tempImg);
             },
             fetchPhone () {
                 this.$http.post('/api/getUserInfo',{
@@ -608,17 +665,20 @@ import { mapGetters } from 'vuex'
                         .pics {
                             margin: 15rpx 0 20rpx;
                             display: flex;
+                            flex-direction: column;
                             justify-content: center;
+                            align-items: center;
                             font-size: 25px;
                             font-weight: bold;
-                            .pic {
+                            position: relative;
+                            .preview-img {
+                                // position: absolute;
+                                // top: 0;
+                                // left: 50%;
+                                // transform: translate(-50%);
+                                display: block;
                                 width: 75rpx;
                                 height: 50rpx;
-                                img{
-                                    display: block;
-                                    width: 100%;
-                                    height: 100%;
-                                }
                             }
                             .pic-left {
                                 margin-right: 15rpx;
@@ -627,12 +687,12 @@ import { mapGetters } from 'vuex'
                     }
                 }
             }
-            .btn{
+            .submit-btn{
                 width: 70%;
                 height: 80rpx;
                 background-color:#259b24;
                 color: #fff; 
-                margin: 0 auto 80rpx;
+                margin: 0 auto 180rpx;
                 border-radius: 4px;
                 text-align: center;
                 display: flex;
@@ -682,20 +742,26 @@ import { mapGetters } from 'vuex'
             .phone-box{
                 padding: 20rpx;
                 display: flex;
-                justify-content: space-between;
+                flex-direction: column;
                 .phone-num{
                     display: flex;
                     align-items: center;
                     input {
                         border-bottom: 1px solid #e3e3e3;
                     }
+                    .btn{
+                        background-color: #4aa143;
+                        color: #fff;
+                        padding: 5rpx 15rpx;
+                        border-radius: 5px;
+                        cursor: pointer;
+                        margin-left: 20rpx;
+                    }
                 }
-                .btn{
-                    background-color: #4aa143;
-                    color: #fff;
-                    padding: 5rpx 15rpx;
-                    border-radius: 5px;
-                    cursor: pointer;
+                .hint {
+                    margin-top: 10rpx;
+                    color: #e3e3e3;
+                    font-size: 12px;
                 }
             }
             .userplan{

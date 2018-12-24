@@ -11,9 +11,10 @@
         </div>
         <div class="phone-box">
             <div class="phone-num">
-                手机号：<input v-model="phone" type="number">
+                手机号：<input v-model="phone" type="number" placeholder="请填写手机号">
+                <div class="btn" @click="changePhone()"> 修改 </div>
             </div>
-            <div class="btn" @click="changePhone()"> 修改 </div>
+            <span class="hint">点击上方电话可修改</span>
         </div>
         <div class="userplan">
             <div class="title-box">
@@ -39,7 +40,7 @@
             </div>
         </div>
         <div class="footer">
-            广东双赢信息科技有限公司
+            广东双盈科技信息有限公司
         </div>
     </div>
 </template>
@@ -169,25 +170,31 @@ import { mapGetters } from 'vuex'
                 }
             }
         }
-        .phone-box{
-            padding: 20rpx;
-            display: flex;
-            justify-content: space-between;
-            .phone-num{
+            .phone-box{
+                padding: 20rpx;
                 display: flex;
-                align-items: center;
-                input {
-                    border-bottom: 1px solid #e3e3e3;
+                flex-direction: column;
+                .phone-num{
+                    display: flex;
+                    align-items: center;
+                    input {
+                        border-bottom: 1px solid #e3e3e3;
+                    }
+                    .btn{
+                        background-color: #4aa143;
+                        color: #fff;
+                        padding: 5rpx 15rpx;
+                        border-radius: 5px;
+                        cursor: pointer;
+                        margin-left: 20rpx;
+                    }
+                }
+                .hint {
+                    margin-top: 10rpx;
+                    color: #e3e3e3;
+                    font-size: 12px;
                 }
             }
-            .btn{
-                background-color: #4aa143;
-                color: #fff;
-                padding: 5rpx 15rpx;
-                border-radius: 5px;
-                cursor: pointer;
-            }
-        }
         .userplan{
             margin-top: 30rpx;
             border-top: 1px solid #e3e3e3;

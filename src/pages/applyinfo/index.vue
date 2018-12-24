@@ -23,7 +23,7 @@
             </ul>
         </div>
         <div class="footer">
-            广东双赢信息科技有限公司
+            广东双盈科技信息有限公司
         </div>
     </div>
 </template>
