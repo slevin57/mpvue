@@ -4,6 +4,7 @@
             <span class="btn" :class="currentTab==1 ? 'btn-active' : ''" @click="toggleTab(1)">提交资料</span>
             <span class="btn" :class="currentTab==2 ? 'btn-active' : ''" @click="toggleTab(2)">个人中心</span>
         </div>
+        <!-- 大表单提交 -->
         <div v-if="currentTab==1" class="sales-index">
             <section class="sec sec-basic ">
                 <h4 class="title title-basic">
@@ -54,7 +55,7 @@
                 </div>
                 <radio-group class="row radio-group" @change="maritalChange">
                     <label class="item radio" v-for="(item, index) in maritalList" :key="item.status">
-                        <radio :value="item.value" :checked="item.checked"/> {{item.status}}
+                        <radio :value="item.value" :checked="item.value == marital_status"/> {{item.status}}
                     </label>
                 </radio-group>
             </section>
@@ -82,15 +83,15 @@
             <section class="sec sec-credit ">
                 <h4 class="title title-credit"> 信用记录 
                     <div class="switch">
-                        是否空白<switch @change="switchChange" />
+                        是否空白<switch :checked="credit_record" @change="switchChange" />
                     </div>
                 </h4>
-                <radio-group v-if="form.credit_record==1" class="row radio-group" @change="recordChange">
+                <radio-group v-if="!credit_record" class="row radio-group" @change="recordChange">
                     <label class="item  nb radio" v-for="(item, index) in recordList" :key="item.status">
-                        <radio :value="item.value" :checked="item.checked"/> {{item.status}}
+                        <radio :value="item.value" :checked="item.value==credit_record_status"/> {{item.status}}
                     </label>
                 </radio-group>
-                <div class="row" v-if="form.credit_record==1">
+                <div class="row" v-if="!credit_record">
                     <textarea v-model="form.overdue" class="item nt" auto-height placeholder="逾期记录" />
                 </div>
             </section>
@@ -107,7 +108,7 @@
                         class="item nb nt nr item1" type="txt" placeholder="产权人">
                     <radio-group  class="row nb radio-group" @change="houseOwnerChange">
                         <label class="item nb radio" v-for="(item, index) in ownerTypeList" :key="item.status">
-                            <radio :value="item.value" :checked="item.checked"/> {{item.status}}
+                            <radio :value="item.value" :checked="item.value==owner_type"/> {{item.status}}
                         </label>
                     </radio-group>
                 </div>
@@ -191,6 +192,7 @@
                 确认提交
             </div>
         </div>
+        <!-- 个人中心 -->
         <div v-if="currentTab==2" class="sales-center">
             <div class="userinfo">
                 <div class="left">
@@ -217,14 +219,14 @@
                 </div>
                 <div class="table">
                     <div class="tr">
-                        <div class="th"> 编号 </div>
-                        <div class="th"> 提交日期 </div>
+                        <div class="th"> 名字 </div>
+                        <div class="th"> 电话 </div>
                         <div class="th"> 状态 </div>
                         <div class="th"> 操作 </div>
                     </div>
                     <div class="tr" v-for="(item,index) in dataList" :key="index">
-                        <div class="td">{{index+1}}</div>
-                        <div class="td">{{item.updated_at}}</div>
+                        <div class="td">{{item.name}}</div>
+                        <div class="td">{{item.tel}}</div>
                         <div class="td" v-if="item.status==1">新订单</div>
                         <div class="td" v-if="item.status==2">其他</div>
                         <div class="td" v-if="item.status==3">已通过</div>
@@ -291,23 +293,23 @@ import { mapGetters } from 'vuex'
                     gender:0,
                     idcard:'',
                     tel:'',
-                    marital_status: 0,
                     coborrower_name:'',
                     coborrower_relation:'',
                     coborrower_gender:0,
                     coborrower_idcard:'',
                     coborrower_tel:'',
-                    credit_record: 1,
-                    credit_record_status:'',
                     overdue:'',
                     house_type:'',
                     house_owner_certificate:'',
                     house_owner:'',
-                    owner_type:'',
                     house_address:'',
                 },
                 fileList:[],
                 order_id:'',
+                marital_status: 1,
+                credit_record: false,
+                owner_type: 1,
+                credit_record_status: 1,
             }
         },
         computed : {
@@ -318,6 +320,9 @@ import { mapGetters } from 'vuex'
             //     this.clientId = this.userInfo.client_id;
             //     this.fetchData();
             // }
+        },
+        created () {
+            
         },
         onLoad (opt) {
             this.order_id = opt.order_id ? opt.order_id : '';
@@ -345,19 +350,19 @@ import { mapGetters } from 'vuex'
                 this.form.gender = e.mp.detail.value;
             },
             maritalChange (e) {
-                this.form.marital_status = e.mp.detail.value;
+                this.marital_status = e.mp.detail.value;
             },
             coborrowerChange (e){
                 this.form.coborrower_gender = e.mp.detail.value;
             },
             switchChange (e){
-                this.form.credit_record = e.mp.detail.value ? 0 : 1;
+                this.credit_record = e.mp.detail.value;
             },
             recordChange (e) {
-                this.form.credit_record_status = e.mp.detail.value;
+                this.credit_record_status = e.mp.detail.value;
             },
             houseOwnerChange (e) {
-                this.form.owner_type = e.mp.detail.value;
+                this.owner_type = e.mp.detail.value;
             },
             toForm (item) {
                 this.order_id = item.id;
@@ -415,6 +420,11 @@ import { mapGetters } from 'vuex'
                 }
                 this.form.agent_id = this.userInfo.client_id;
                 this.form.id = this.order_id;
+                this.form.marital_status = this.marital_status;
+                this.form.owner_type = this.owner_type;
+                this.form.credit_record_status = this.credit_record_status;
+                this.form.credit_record = this.credit_record ? 0 : 1;
+                console.log(`this.form:`,this.form);
                 let data = [];
                 data.push(this.form);
                 data.push(this.fileList);
@@ -491,25 +501,24 @@ import { mapGetters } from 'vuex'
                 this.form.gender = 0;
                 this.form.idcard = '';
                 this.form.tel = '';
-                this.form.marital_status =  0;
                 this.form.coborrower_name = '';
                 this.form.coborrower_relation = '';
                 this.form.coborrower_gender = 0;
                 this.form.coborrower_idcard = '';
                 this.form.coborrower_tel = '';
-                this.form.credit_record =  1;
-                this.form.credit_record_status = '';
                 this.form.overdue = '';
                 this.form.house_type = '';
                 this.form.house_owner_certificate = '';
                 this.form.house_owner = '';
-                this.form.owner_type = '';
                 this.form.house_address = '';
+                this.owner_type = 1;
+                this.credit_record = false;
+                this.marital_status = 1;
+                this.credit_record_status = 1;
                 this.fileList = [];
                 Object.keys(this.tempImg).forEach(item => {
                     this.tempImg[item] = '';
                 })
-                console.log(`this.tempImg:`,this.tempImg);
             },
             fetchPhone () {
                 this.$http.post('/api/getUserInfo',{

@@ -108,26 +108,38 @@
                 </div>
             </div>
         </section>
-        <navigator open-type="redirect" url="/pages/index/main" class="btn" >返回首页</navigator >
+        <section class="btns">
+            <!-- <span class="btn">有意向</span> -->
+            <navigator open-type="redirect" url="/pages/index/main" class="btn" >返回首页</navigator >
+        </section>
+        <section class="mail-box">
+            <input v-model="email" type="text" placeholder="详细资料发送到我的邮箱">
+            <span class="btn" @click="sendDetail()">发送</span>
+        </section>
     </div>
 </template>
 
 <script>
+import { mapGetters } from 'vuex'
     export default {
         data () {
             return {
                 dataInfo:{},
-                id: '',
+                order_id: '',
                 fileList: [],
+                email:'',
             }
         },
         onLoad (opt) {
-            this.id = opt.id;
+            this.order_id = opt.id;
+        },
+        computed : {
+            ...mapGetters(["userInfo"])
         },
         watch:{
-            id () {
-                if (this.id) {
-                    this.fetchData(this.id);
+            order_id () {
+                if (this.order_id) {
+                    this.fetchData(this.order_id);
                 }
             }
         },
@@ -135,8 +147,8 @@
             
         },
         methods :{
-            fetchData (id) {
-                this.$http.get(`/api/order_detail/${id}`).then( res => {
+            fetchData (order_id) {
+                this.$http.get(`/api/order_detail/${order_id}`).then( res => {
                     console.log(`res:`,res);
                     this.dataInfo = res.data[0];
                     let files = res.data[1];
@@ -159,6 +171,31 @@
                     current: url, // 当前显示图片的http链接
                     urls: [url] // 需要预览的图片http链接列表
                 })                
+            },
+            sendDetail () {
+                if (!this.email){
+                    wx.showToast({title:'邮箱不能为空',icon:'none',duration:2000});
+                    return;
+                }
+                wx.showLoading({title:'邮箱提交中'});
+                this.$http.post('/api/order_intention',{
+                    order_id: this.order_id || 8,
+                    capital_id: this.userInfo.client_id || 3,
+                    email: this.email,
+                }).then(res => {
+                    this.email = '';
+                    if (res.data == 200) {
+                        wx.hideLoading();
+                        wx.showToast({title:'邮箱已提交成功',icon:'',duration:2000});
+                    } else {
+                        wx.hideLoading();
+                        wx.showToast({title:'请重新提交',icon:'none',duration:2000});
+                    }
+                }).catch(err => {
+                    this.email = '';
+                    wx.hideLoading();
+                    wx.showToast({title:'请重新提交。',icon:'none',duration:2000});
+                })
             }
         }
     }
@@ -231,17 +268,45 @@
             }
         }
     }
-    .btn{
-        width: 70%;
-        height: 80rpx;
-        background-color:#259b24;
-        color: #fff; 
-        margin: 0 auto 80rpx;
-        border-radius: 4px;
-        text-align: center;
+    .btns {
+        width: 80%;
         display: flex;
-        align-items: center;
         justify-content: center;
+        margin: 80rpx auto 30rpx;
+        .btn{
+            width: 40%;
+            height: 80rpx;
+            background-color:#259b24;
+            color: #fff; 
+            border-radius: 4px;
+            text-align: center;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+    }
+    .mail-box{
+        width: 80%;
+        height: 50rpx;
+        display: flex;
+        justify-content: space-between;
+        margin:0 auto 80rpx;
+        input,.btn{
+            height: 100%;
+        }
+        input {
+            width: 75%;
+            border: 1px solid #e3e3e3;
+            padding-left: 10rpx;
+        }
+        .btn{
+            width: 20%;
+            background-color:#259b24;
+            border-radius: 4px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
     }
 }
 </style>
