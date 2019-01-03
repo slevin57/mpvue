@@ -6,9 +6,7 @@
         "pages/investman/main",
         "pages/about/main",
         "pages/client/main",
-        "pages/formupload/main",
         "pages/apply/main",
-        "pages/error/main",
         "pages/joint/main"
   ],
     "window": {
