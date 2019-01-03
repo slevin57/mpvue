@@ -113,8 +113,10 @@
             <navigator open-type="redirect" url="/pages/index/main" class="btn" >返回首页</navigator >
         </section>
         <section class="mail-box">
-            <input v-model="email" type="text" placeholder="详细资料发送到我的邮箱">
-            <span class="btn" @click="sendDetail()">发送</span>
+            <form action class="form" :report-submit="true" @submit="sendDetail">
+                <input type="text" v-model="email" placeholder="详细资料发送到我的邮箱">
+                <button class="btn" form-type="submit">发送</button>
+            </form>
         </section>
     </div>
 </template>
@@ -172,7 +174,8 @@ import { mapGetters } from 'vuex'
                     urls: [url] // 需要预览的图片http链接列表
                 })                
             },
-            sendDetail () {
+            sendDetail (e) {
+                const formId = e.mp.detail.formId;
                 if (!this.email){
                     wx.showToast({title:'邮箱不能为空',icon:'none',duration:2000});
                     return;
@@ -182,6 +185,7 @@ import { mapGetters } from 'vuex'
                     order_id: this.order_id || 8,
                     capital_id: this.userInfo.client_id || 3,
                     email: this.email,
+                    formId,
                 }).then(res => {
                     this.email = '';
                     if (res.data == 200) {
@@ -243,6 +247,7 @@ import { mapGetters } from 'vuex'
     .sec-pics {
         margin-bottom: 50rpx;
         .row {
+            flex-wrap: wrap;
             .item {
                 display: flex;
                 flex-direction: column;
@@ -255,7 +260,7 @@ import { mapGetters } from 'vuex'
                     .pic {
                         width: 75rpx;
                         height: 50rpx;
-                        img{
+                        img {
                             display: block;
                             width: 100%;
                             height: 100%;
@@ -287,26 +292,48 @@ import { mapGetters } from 'vuex'
     }
     .mail-box{
         width: 80%;
-        height: 50rpx;
-        display: flex;
-        justify-content: space-between;
+        height: 100rpx;
         margin:0 auto 80rpx;
-        input,.btn{
-            height: 100%;
+        .form {
+            input {
+                display: block;
+                height: 50rpx;
+                border: 1px solid #e3e3e3;
+                padding-left: 20rpx;
+            }
+            button {
+                margin-top: 20rpx;
+                height: 60rpx;
+                line-height: 60rpx;
+                width: 200rpx;
+                background-color:#259b24;
+                color: #fff;
+            }
         }
-        input {
-            width: 75%;
-            border: 1px solid #e3e3e3;
-            padding-left: 10rpx;
-        }
-        .btn{
-            width: 20%;
-            background-color:#259b24;
-            border-radius: 4px;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-        }
+        // .form{
+        //     width: 100%;
+        //     height: 100%;
+        //     // display: flex;
+        //     // justify-content: space-between;
+        //     input,.btn{
+        //         height: 100%;
+        //     }
+        //     input {
+        //         display: block;
+        //         width: 60%;
+        //         border: 1px solid #e3e3e3;
+        //         // padding-left: 10rpx;
+        //     }
+        //     .btn{
+        //         width: 20%;
+        //         background-color:#259b24;
+        //         border-radius: 4px;
+        //         display: flex;
+        //         justify-content: center;
+        //         align-items: center;
+        //         margin: 0;
+        //     }
+        // }
     }
 }
 </style>

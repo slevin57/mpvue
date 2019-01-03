@@ -3,17 +3,18 @@
         "pages/index/main",
         "pages/salesman/main",
         "pages/formshow/main",
+        "pages/investman/main",
         "pages/about/main",
         "pages/client/main",
-        "pages/investman/main",
         "pages/formupload/main",
         "pages/apply/main",
-        "pages/error/main"
+        "pages/error/main",
+        "pages/joint/main"
   ],
-  "window": {
-    "backgroundTextStyle": "light",
-    "navigationBarBackgroundColor": "transparent",
-    "navigationBarTitleText": "双盈信息科技",
-    "navigationBarTextStyle": "black"
-  }
+    "window": {
+        "backgroundTextStyle": "light",
+        "navigationBarBackgroundColor": "#14a1fd",
+        "navigationBarTitleText": "双盈信息科技",
+        "navigationBarTextStyle": "#fff"
+    }
 }

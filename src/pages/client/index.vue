@@ -6,7 +6,7 @@
             </div>
             <div class="right">
                 <p class="name">昵称：{{userInfo.nickName}}</p>
-                <p class="identify">用户身份：借款人</p>
+                <p class="identify">用户身份：普通用户</p>
             </div>
         </div>
         <div class="phone-box">
@@ -16,7 +16,7 @@
             </div>
             <span class="hint">点击上方电话可修改</span>
         </div>
-        <div class="userplan">
+        <div class="userplan" v-if="vibible">
             <div class="title-box">
                 <span class="title">还款计划</span>
                 <!-- <span class="detail">
@@ -31,7 +31,7 @@
                     <div class="th"> 还款状态 </div>
                 </div>
                 <div class="tr" v-for="(item,index) in list" :key="index">
-                    <div class="td">第{{item.index+1}}期</div>
+                    <div class="td">第{{index+1}}期</div>
                     <div class="td">{{item.repay_date}}</div>
                     <div class="td">{{item.repay_num}}</div>
                     <div v-if="item.status" class="td payed">已还</div>
@@ -53,6 +53,7 @@ import { mapGetters } from 'vuex'
                 clientId: 2,
                 list: [],
                 phone: 110,
+                visible: false,
             }
         },
         computed : {
@@ -66,6 +67,9 @@ import { mapGetters } from 'vuex'
             fetchData () {
                 this.$http.get(`/api/client_repayments/${this.clientId}`).then(({data}) => {
                     this.list = data;
+                    if (this.list.length) {
+                        this.visible = true;
+                    }
                 })
             },
             fetchPhone () {

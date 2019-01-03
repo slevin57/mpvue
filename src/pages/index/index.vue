@@ -1,9 +1,14 @@
 
 <template>
 <div class="index-page">
+    <!-- 获取权限 -->
     <sectionn v-if="!canGetInfo" class="sec-mask">
-        <button v-show="!loading" type="primary" open-type="getUserInfo" @getuserinfo="bindGetUserInfo" @click="getUserInfoClick">获取权限</button>
-        <div v-if="newClient" class="new-user-form">
+        <div class="wrapper" v-show="!loading">
+            <img class="wechat" src="../../../static/images/wechat-a.png" alt="">
+            <p class="hint">使用微信授权登录后才允许操作哦</p>
+            <button class="btn" type="primary" open-type="getUserInfo" @getuserinfo="bindGetUserInfo" @click="getUserInfoClick">微信登录</button>
+        </div>
+        <!-- <div v-if="newClient" class="new-user-form">
             <div class="row">
                 <p class="title name">姓名：</p>
                 <input class='input' type="text" v-model="form.name">
@@ -13,8 +18,9 @@
                 <input class='input' type="number" v-model="form.tel">
             </div>
             <button class="btn" @click="savePhone()">提交</button>
-        </div>
+        </div> -->
     </sectionn>
+    <!-- 轮播图 -->
     <section class="sec swiper-sec">
         <swiper
         class="swiper"
@@ -29,13 +35,63 @@
             </block>
         </swiper>
     </section>
-    <section class="sec sec2">
-        <!-- <button open-type="getUserInfo" @getuserinfo="bindGetUserInfo" @click="getUserInfoClick">获取权限</button> -->
+    <!-- 企业宝 -->
+    <view style='border: 2rpx solid #efefef;margin:5rpx 5rpx;'>
+        <view style='height:80rpx;border-bottom: 1px solid #efefef;'>
+            <navigator style='height:80rpx;padding:15rpx 42%; '>
+                <text>企业宝</text>
+            </navigator> 
+        </view>
+        <view style='height:200rpx;'> </view>
+    </view>
+    <!-- 房易贷 -->
+    <view style='border: 2rpx solid #efefef;margin:5rpx 5rpx;'>
+        <view style='height:80rpx;border-bottom: 1px solid #efefef;'>
+            <navigator url="/pages/apply/main" style='height:80rpx;padding:15rpx 42%; '>
+                <text>房易贷</text>
+            </navigator> 
+        </view>
+    </view>
+    <!-- 房易卖 -->
+    <view style='border: 2rpx solid #efefef;margin:5rpx 5rpx;'>
+        <view style='height:80rpx;border-bottom: 1px solid #efefef;'>
+            <navigator style='height:80rpx;padding:15rpx 42%; '>
+                <text>房易卖</text>
+            </navigator> 
+        </view>
+    </view>
+    <!-- 个人中心 -->
+    <view style='border: 2rpx solid #efefef;margin:5rpx 5rpx;' @click="matchPage(userInfo.status)">
+        <view style='height:80rpx;border-bottom: 1px solid #efefef;'>
+                <navigator url='/pages/client/main' style='height:80rpx;padding:15rpx 39%; '>
+                    <text>个人中心</text>
+                </navigator> 
+        </view>
+    </view>
+    <!-- 版权文字 -->
+    <view style='padding:15rpx 22%;margin-top:30rpx;'>
+        <navigator url='/pages/about/main' style='color:grey;font-size:24rpx;'>
+            <text>技术支持：广东双盈科技信息有限公司</text> 
+        </navigator>
+    </view>
+    <!-- 底部固定 -->
+    <view class='add_btn2'>   
+        <button class='btn2' open-type="contact" type="default-light" size="20" session-from="weapp" >
+            在线咨询  
+        </button>
+    </view>
+    <!-- 右侧悬浮 申请合作 -->
+    <view class='add_verify'>
+        <navigator url='/pages/joint/main' class='verify'>
+            <text class="text">合作</text> 
+        </navigator>
+    </view>
+    <!-- <section class="sec sec2">
         <navigator url="/pages/apply/main" class="btn" >房抵申请</navigator >
         <navigator url="/pages/about/main" class="btn" >关于双赢</navigator >
         <navigator url="/pages/client/main" class="btn" >个人中心</navigator >
         <p class="comp-name">广东双盈科技信息有限公司</p>
-    </section>
+    </section> -->
 </div>
 </template>
 <script>
@@ -76,6 +132,7 @@ export default {
 
     },
     mounted (){
+
         this.fetchBanner();
         this.loading = true;
         this.canGetInfo = false;
@@ -92,6 +149,7 @@ export default {
             },
             fail (err) {
                 console.log(`wx.login失败:`,err);
+                // 需要提示用户手动点击button按钮进行授权
                 wx.hideLoading();
                 wx.showToast({
                     title: 'wx.login失败'+err,
@@ -99,7 +157,7 @@ export default {
                     duration: 1000
                 })                
             }
-        })  
+        })
     },
     methods:{
         ...mapMutations(['changeStatus']),
@@ -108,6 +166,7 @@ export default {
             wx.getUserInfo({
                 withCredentials: true,
                 success (res) {
+                    console.log(`ress:`,res);
                     let { encryptedData,userInfo,iv } = res;
                     self.$http.post('/api/getWxUserInfo',{
                         code,
@@ -120,15 +179,15 @@ export default {
                         userInfo.oldUser = res.data.oldUser;
                         self.changeStatus(userInfo);
                         wx.hideLoading();
-                        // self.canGetInfo = true;
-                        if (res.data.oldUser == 0) {
-                            self.newClient = true;
-                            return;
-                        } else {
-                            // self.canGetInfo = true;
-                            // 根据身份跳转
-                            self.matchPage(res.data.status);
-                        }
+                        self.canGetInfo = true;
+                        // if (res.data.oldUser == 0) {
+                        //     self.newClient = true;
+                        //     return;
+                        // } else {
+                        //     // self.canGetInfo = true;
+                        //     // 根据身份跳转
+                        //     self.matchPage(res.data.status);
+                        // }
                     }).catch(err => {
                         console.log(`自动请求api失败 err:`,err);
                         wx.hideLoading();
@@ -174,15 +233,15 @@ export default {
                     userInfo.oldUser = res.data.oldUser;
                     self.changeStatus(userInfo);
                     wx.hideLoading();
-                    // self.canGetInfo = true;
-                    if (res.data.oldUser == 0) {
-                        self.newClient = true;
-                        return;
-                    } else {
-                        // self.canGetInfo = true;
-                        // 根据身份跳转
-                        self.matchPage(res.data.status);
-                    }
+                    self.canGetInfo = true;
+                    // if (res.data.oldUser == 0) {
+                    //     self.newClient = true;
+                    //     return;
+                    // } else {
+                    //     // self.canGetInfo = true;
+                    //     // 根据身份跳转
+                    //     self.matchPage(res.data.status);
+                    // }
                     // self.changeStatus(userInfo);
                     // self.canGetInfo = true;
                     // self.loading = false;
@@ -226,7 +285,6 @@ export default {
         // 根据用户身份跳转不同页面
         // status=0:普通用户; status=1:业务员; status=2:资金方
         matchPage (status) {
-            console.log(`stadtus:`,status);
             switch (status) {
                 case 0:                   
                     break;
@@ -243,7 +301,6 @@ export default {
         },
         savePhone () {
             const self = this;
-            console.log(`this.form.name:`,this.form.name);
             if (!this.form.name || !this.form.tel){
                 wx.showToast({
                     title:'请填写完整信息',
@@ -285,12 +342,47 @@ export default {
             this.$http.get('/api/get_intro_pic').then(res => {
                 this.banner = res.data;
             })
-        }
+        },
     }
 }
 </script>
 
 <style scoped lang="scss">
+.container{background-color:#ccc}
+/* 底部悬浮 */
+
+.add_btn2{
+    width: 100%;
+    position: fixed;
+    bottom: 10rpx;
+}
+.btn2{
+    margin-top: 30rpx;
+    width: 450rpx;
+    background: #14a1fd;
+    color: #fff;
+    border-radius: 70rpx;
+}
+.add_verify{
+    position: fixed;
+    right: 30rpx;
+    bottom: 200rpx;
+    .verify{
+        width: 80rpx;
+        height: 80rpx;
+        background: #14a1fd;
+        color: #fff;
+        border-radius: 100%;
+        .text {
+            display: block;
+            height: 80rpx;
+            line-height: 80rpx;
+            font-size: 15px;
+            text-align: center;
+        }
+    }
+}
+
 .index-page{
     display: flex;
     flex-direction: column;
@@ -332,6 +424,7 @@ export default {
     height: 100%;
 }
 .sec-mask {
+    background: rgba(0,0,0,.4);
     position: fixed;
     display: flex;
     justify-content: center;
@@ -340,10 +433,33 @@ export default {
     left: 0;
     width: 100%;
     height: 100%;
-    background-color: #fff;
     z-index: 1;
-    button {
-        width: 50%;
+    .wrapper {
+        width: 90%;
+        height: 40%;
+        background-color: #fff;
+        border-radius: 4px;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        .wechat{
+            margin-top: 80rpx;
+            display: block;
+            width: 70rpx;
+            height: 70rpx;
+            border-radius: 50%;
+        }
+        .hint{
+            margin-top: 30rpx;
+        }
+        button {
+            width: 70%;
+            height: 100rpx;
+            background-color:#259b24;
+            border-radius: 70rpx;
+            margin-top: 60rpx;
+        }
     }
     .new-user-form {
         .title{

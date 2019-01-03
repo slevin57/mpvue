@@ -5,6 +5,7 @@
             <span class="btn" :class="currentTab==2 ? 'btn-active' : ''" @click="toggleTab(2)">个人中心</span>
         </div>
         <!-- 大表单提交 -->
+        <form action class="form" :report-submit="true" @submit="submit">            
         <div v-if="currentTab==1" class="sales-index">
             <section class="sec sec-basic ">
                 <h4 class="title title-basic">
@@ -188,10 +189,10 @@
                     </div>
                 </div>              
             </section>
-            <div class="submit-btn" @click="submit()">
-                确认提交
-            </div>
+            <!-- <div class="submit-btn" @click="submit()"> 确认提交 </div> -->
+            <button class="submit-btn" form-type="submit">确认提交</button>
         </div>
+        </form>
         <!-- 个人中心 -->
         <div v-if="currentTab==2" class="sales-center">
             <div class="userinfo">
@@ -247,7 +248,7 @@ import { mapGetters } from 'vuex'
     export default {
         data () {
             return {
-                currentTab: 1,
+                currentTab: 2,
                 clientId: 3,
                 dataList:[],
                 phone: 110,
@@ -409,7 +410,8 @@ import { mapGetters } from 'vuex'
                     }
                 })
             },
-            submit () {
+            submit (e) {
+                const formId = e.mp.detail.formId;
                 if (!this.form.tel || this.fileList.length == 0) {
                     wx.showToast({
                         title:'请填写完整',
@@ -430,7 +432,8 @@ import { mapGetters } from 'vuex'
                 data.push(this.fileList);
                 wx.showLoading({ title:'资料提交中...',  })
                 this.$http.post('api/update_orders',{
-                    data
+                    data,
+                    formId,
                 }).then(res => {
                     wx.hideLoading();
                     if (res.data == 200 ){
@@ -607,13 +610,14 @@ import { mapGetters } from 'vuex'
             }
         }
         .sales-index {
-            padding: 0 20rpx;
+            padding: 20rpx 0 80rpx;
             .sec {
                 margin-top: 30rpx;
                 .title{
                     font-weight: bold;
                     color: #000;
                     margin-bottom: 5rpx;
+                    padding: 0 20rpx;
                 }
                 .row {
                     display: flex;
