@@ -86,18 +86,12 @@
             <text class="text">合作</text> 
         </navigator>
     </view>
-    <!-- <section class="sec sec2">
-        <navigator url="/pages/apply/main" class="btn" >房抵申请</navigator >
-        <navigator url="/pages/about/main" class="btn" >关于双赢</navigator >
-        <navigator url="/pages/client/main" class="btn" >个人中心</navigator >
-        <p class="comp-name">广东双盈科技信息有限公司</p>
-    </section> -->
 </div>
 </template>
 <script>
 import {mapMutations,mapGetters} from 'vuex'
 
-// serId 就是那个相对应的client_id 或 agent_id 或 capital_id
+// userId 就是那个相对应的client_id 或 agent_id 或 capital_id
 export default {
     data () {
         return {

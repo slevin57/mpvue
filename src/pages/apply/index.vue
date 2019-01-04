@@ -2,7 +2,7 @@
 <template>
 <div class="apply-page">
     <div v-if="!apply" class="form">
-        <form action="">
+        <form :report-submit="true" @submit="submit">
             <div class="row">
                 <p class="title name">姓名：</p>
                 <input class='input' type="text" v-model="name">
@@ -23,8 +23,8 @@
                 <p class="title name">备注：</p>
                 <input class='input' type="text" v-model="client_remark">
             </div>
+            <button class="btn" form-type="submit">提交申请</button>
         </form>
-        <button class="btn" @click="submit()">提交</button>
     </div>
     <div v-if="!apply" class="footer">
         广东双盈科技信息有限公司
@@ -54,7 +54,8 @@ export default {
         this.apply = false;
     },
     methods:{
-        submit() {
+        submit(e) {
+            console.log(`e:`,e);
             if (!this.tel || !this.idcard || !this.name){
                 wx.showToast({
                     title: '请填写完整',
@@ -63,6 +64,7 @@ export default {
                 })
                 return;
             }
+            const formId = e.mp.detail.formId;;
             this.$http.post('/api/apply_order',{
                 client_id: this.client_id,
                 name:this.name,
@@ -70,6 +72,7 @@ export default {
                 idcard:this.idcard,
                 apply_amount:this.apply_amount,
                 client_remark: this.client_remark,
+                formId,
             }).then((res => {
                 if (res.data == 200) {
                     this.apply = true;
