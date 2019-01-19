@@ -48,7 +48,7 @@
                 </div>
                 <div class="row">
                     <input v-model="form.idcard" 
-                        class="item nb item1" type="number" placeholder="借款人身份证号">
+                        class="item nb item1" type="text" placeholder="借款人身份证号">
                 </div>
                 <div class="row">
                     <input v-model="form.tel" 
@@ -74,7 +74,7 @@
                 </div>
                 <div class="row">
                     <input v-model="form.coborrower_idcard" 
-                        class="item nb item1" type="number" placeholder="共借人身份证号">
+                        class="item nb item1" type="text" placeholder="共借人身份证号">
                 </div>
                 <div class="row">
                     <input v-model="form.coborrower_tel" 

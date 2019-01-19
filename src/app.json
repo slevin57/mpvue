@@ -1,12 +1,12 @@
 {
     "pages": [
         "pages/index/main",
+        "pages/apply/main",
         "pages/salesman/main",
         "pages/formshow/main",
         "pages/investman/main",
         "pages/about/main",
         "pages/client/main",
-        "pages/apply/main",
         "pages/joint/main"
   ],
     "window": {

@@ -13,7 +13,7 @@
             </div>
             <div class="row">
                 <p class="title name">身份证号：</p>
-                <input class='input' type="number" v-model="idcard">
+                <input class='input' type="text" v-model="idcard">
             </div>
             <div class="row">
                 <p class="title name">借款金额：</p>
@@ -32,30 +32,32 @@
     <div v-else class="applied">
         <div class="row">您的申请已提交</div>
         <div class="row">请等待业务员联系您</div>
-        <navigator open-type="redirect" url="/pages/index/main" class="row btn" >返回</navigator >
+        <navigator open-type="navigateBack" delta="1" class="row btn" >返回</navigator >
     </div>
 </div>
 </template>
 <script>
+import {mapMutations,mapGetters} from 'vuex'
 export default {
     data () {
         return {
             apply: false,
             name:'',
-            client_id: 2,
             tel:'',
             idcard:'',
             apply_amount:'',
             client_remark:'',
         }
     },
+    computed : {
+        ...mapGetters(["userInfo"])
+    },
     mounted () {
-        console.log(`44:`,44);
         this.apply = false;
+        console.log(`userInfo:`,this.userInfo);
     },
     methods:{
         submit(e) {
-            console.log(`e:`,e);
             if (!this.tel || !this.idcard || !this.name){
                 wx.showToast({
                     title: '请填写完整',
@@ -64,9 +66,12 @@ export default {
                 })
                 return;
             }
-            const formId = e.mp.detail.formId;;
+            const formId = e.mp.detail.formId;
+            wx.showLoading({
+                title: '提交中...',
+            })
             this.$http.post('/api/apply_order',{
-                client_id: this.client_id,
+                client_id: this.userInfo.client_id,
                 name:this.name,
                 tel:this.tel,
                 idcard:this.idcard,
@@ -74,14 +79,14 @@ export default {
                 client_remark: this.client_remark,
                 formId,
             }).then((res => {
+                wx.hideLoading();
                 if (res.data == 200) {
                     this.apply = true;
-        this.client_id = '';
-        this.name = '';
-        this.tel = '';
-        this.idcard = '';
-        this.apply_amount = '';
-        this.client_remark = '';
+                    this.name = '';
+                    this.tel = '';
+                    this.idcard = '';
+                    this.apply_amount = '';
+                    this.client_remark = '';
                 } else {
                     wx.showToast({
                         title: '请求失败',

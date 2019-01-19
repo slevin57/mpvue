@@ -123,11 +123,7 @@ export default {
         ...mapGetters(["userInfo"])
     },
     onLoad (){
-
-    },
-    mounted (){
-
-        this.fetchBanner();
+        console.log(`3:`,3);
         this.loading = true;
         this.canGetInfo = false;
         const self = this;
@@ -152,6 +148,11 @@ export default {
                 })                
             }
         })
+    },
+    mounted (){
+
+        this.fetchBanner();
+
     },
     methods:{
         ...mapMutations(['changeStatus']),
