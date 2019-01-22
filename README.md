@@ -2,6 +2,8 @@
 
 > A Mpvue project
 
+![Example](https://raw.githubusercontent.com/Patricklea/pics/master/blog/mpvue.gif)
+
 ## Build Setup
 
 ``` bash
