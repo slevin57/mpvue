@@ -101,7 +101,7 @@
                     <p class="item-name" v-if="item.file_type=='7'">评估截图</p>
                     <p class="item-name" v-if="item.file_type=='8'">其他补充资料</p>
                     <div class="pics">
-                        <div class="pic pic-left" @click="preview(item.url)"><img :src="item.url"></img></div>
+                        <!-- <div class="pic pic-left" @click="preview(item.url)"><img :src="item.url"></img></div> -->
                         <div class="pic pic-left" @click="preview(item.url)"><img :src="item.url"></img></div>
                         <div class="pic" v-if="item.url2" @click="preview(item.url2)"><img :src="item.url2"></img></div>
                     </div>

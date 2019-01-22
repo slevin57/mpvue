@@ -387,8 +387,10 @@ import { mapGetters } from 'vuex'
                             filePath: tempFilePaths[0],
                             name: 'file',
                             success(res) {
+                                console.log(`res:`,JSON.parse(res.data));
                                 file.file_type = type;
-                                file.url = res.data && JSON.parse(res.data);
+                                file.url = res.data && JSON.parse(res.data)[0];
+                                file.original_url = res.data && JSON.parse(res.data)[1];
                                 self.fileList.push(file);
                                 self.tempImg[type] = file.url;
                                 wx.hideLoading();

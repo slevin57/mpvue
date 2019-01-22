@@ -63,9 +63,9 @@
     <!-- 个人中心 -->
     <view style='border: 2rpx solid #efefef;margin:5rpx 5rpx;' @click="matchPage(userInfo.status)">
         <view style='height:80rpx;border-bottom: 1px solid #efefef;'>
-                <navigator url='/pages/client/main' style='height:80rpx;padding:15rpx 39%; '>
+                <div style='height:80rpx;padding:15rpx 39%; '>
                     <text>个人中心</text>
-                </navigator> 
+                </div> 
         </view>
     </view>
     <!-- 版权文字 -->
@@ -280,14 +280,15 @@ export default {
         // 根据用户身份跳转不同页面
         // status=0:普通用户; status=1:业务员; status=2:资金方
         matchPage (status) {
+            console.log(`status:`,status);
             switch (status) {
                 case 0:                   
                     break;
                 case 1:
-                    wx.redirectTo({ url: '/pages/salesman/main' }) 
+                    wx.navigateTo({ url: '/pages/salesman/main' }) 
                     break;
                 case 2:
-                    wx.redirectTo({ url: '/pages/investman/main' })   
+                    wx.navigateTo({ url: '/pages/investman/main' })   
                     break;
                 default :
                     break;
